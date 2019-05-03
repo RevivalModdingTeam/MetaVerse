@@ -25,7 +25,7 @@ public class MetaItems {
     }
 
     public static void registerRenders() {
-        registerRender(temp);
+
     }
 
     public static Item registerItem(Item item, boolean tab) {
