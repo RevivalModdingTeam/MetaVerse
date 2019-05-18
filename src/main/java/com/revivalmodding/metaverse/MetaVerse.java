@@ -8,7 +8,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = MetaVerse.MODID, name = MetaVerse.NAME, version = MetaVerse.VERSION)
+@Mod(modid = MetaVerse.MODID, name = MetaVerse.NAME, version = MetaVerse.VERSION, dependencies = "required-after:revivalcore@[0.1.4,)",updateJSON = MetaVerse.UPDATEURL)
 public class MetaVerse
 {
     @Mod.Instance
@@ -21,6 +21,7 @@ public class MetaVerse
     public static final String MODID = "metaverse";
     public static final String NAME = "Meta Verse";
     public static final String VERSION = "0.0.1";
+    public static final String UPDATEURL  = "https://raw.githubusercontent.com/RevivalModdingTeam/RevivalModding-ModBugs/master/updatemeta.json";
 
 
     @EventHandler
