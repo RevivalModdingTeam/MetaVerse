@@ -21,7 +21,7 @@ public class MetaVerse
     public static final String MODID = "metaverse";
     public static final String NAME = "Meta Verse";
     public static final String VERSION = "0.0.1";
-    public static final String UPDATEURL  = "https://raw.githubusercontent.com/RevivalModdingTeam/RevivalModding-ModBugs/master/updatemeta.json";
+    public static final String UPDATEURL  = "https://github.com/RevivalModdingTeam/RevivalModding-ModBugs/blob/master/update/updatemeta.json";
 
 
     @EventHandler
