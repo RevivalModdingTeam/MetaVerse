@@ -1,10 +1,23 @@
 package com.revivalmodding.metaverse.common.meta;
 
+import com.google.common.collect.ImmutableMap;
 import com.revivalmodding.metaverse.Metaverse;
+import com.revivalmodding.metaverse.common.objects.blocks.Breach;
+import com.revivalmodding.metaverse.common.objects.blocks.MVBlocks;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.block.DirectionalBlock;
+import net.minecraft.block.material.Material;
+import net.minecraft.command.arguments.NBTCompoundTagArgument;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.state.DirectionProperty;
+import net.minecraft.tags.BlockTags;
 import net.minecraft.util.Direction;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.Rotation;
 import net.minecraft.util.math.*;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.gen.Heightmap;
@@ -21,11 +34,21 @@ public class Vibe {
             if(getPosLookingAt(event.getEntity()) != null) {
                 Vec3d selected = getPosLookingAt(event.getEntity());
                 assert selected != null;
-                BlockPos selectedPos = new BlockPos(selected);
-                BlockPos newSelection = event.getWorld().getHeight(Heightmap.Type.WORLD_SURFACE, selectedPos);
-                event.getPlayer().setPosition(newSelection.getX(), newSelection.getY(), newSelection.getZ());
-            }
+                BlockPos newSelection = event.getWorld().getHeight(Heightmap.Type.WORLD_SURFACE, new BlockPos(selected));
+                BlockPos currentLocation = event.getPlayer().getPosition();
+                Block breach = new Breach(Block.Properties.from(MVBlocks.BREACH));
 
+                if(event.getPlayer().getHorizontalFacing().equals(Direction.NORTH)) {
+                    event.getWorld().setBlockState(currentLocation.north(2), breach.getDefaultState().with(DirectionalBlock.FACING, Direction.NORTH));
+                } else if(event.getPlayer().getHorizontalFacing().equals(Direction.EAST)) {
+                    event.getWorld().setBlockState(currentLocation.east(2), breach.getDefaultState().with(DirectionalBlock.FACING, Direction.EAST));
+                } else if(event.getPlayer().getHorizontalFacing().equals(Direction.WEST)) {
+                    event.getWorld().setBlockState(currentLocation.west(2), breach.getDefaultState().with(DirectionalBlock.FACING, Direction.WEST));
+                } else {
+                    event.getWorld().setBlockState(currentLocation.south(2), breach.getDefaultState().with(DirectionalBlock.FACING, Direction.SOUTH));
+                }
+                
+            }
         }
     }
 
