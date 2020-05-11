@@ -9,6 +9,11 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.Direction;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
+import net.minecraft.entity.Entity;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.*;
 import net.minecraft.util.math.shapes.VoxelShapes;
 import net.minecraft.world.gen.Heightmap;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -36,6 +41,10 @@ public class Vibe {
                 } else {
                     event.getWorld().setBlockState(currentLocation.south(2), breach.getDefaultState().with(DirectionalBlock.FACING, Direction.SOUTH));
                 }
+            }
+                BlockPos selectedPos = new BlockPos(selected);
+                BlockPos newSelection = event.getWorld().getHeight(Heightmap.Type.WORLD_SURFACE, selectedPos);
+                event.getPlayer().setPosition(newSelection.getX(), newSelection.getY(), newSelection.getZ());
             }
         }
     }
