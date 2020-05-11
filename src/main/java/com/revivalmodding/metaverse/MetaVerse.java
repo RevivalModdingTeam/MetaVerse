@@ -1,38 +1,34 @@
 package com.revivalmodding.metaverse;
 
-import com.revivalmodding.metaverse.proxy.IProxy;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.common.Mod.EventHandler;
-import net.minecraftforge.fml.common.SidedProxy;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
+import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
+import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@Mod(modid = MetaVerse.MODID, name = MetaVerse.NAME, version = MetaVerse.VERSION, dependencies = "required-after:revivalcore@[0.1.4,)",updateJSON = MetaVerse.UPDATEURL)
-public class MetaVerse
-{
-    @Mod.Instance
-    public static MetaVerse instance;
+import java.util.stream.Collectors;
 
-    @SidedProxy(clientSide = "com.revivalmodding.metaverse.proxy.ClientProxy", serverSide = "com.revivalmodding.metaverse.proxy.ServerProxy")
-    public static IProxy proxy;
-    private static Logger logger;
+@Mod("metaverse")
+public class Metaverse {
 
     public static final String MODID = "metaverse";
-    public static final String NAME = "Meta Verse";
-    public static final String VERSION = "0.0.1";
-    public static final String UPDATEURL  = "https://github.com/RevivalModdingTeam/RevivalModding-ModBugs/blob/master/update/updatemeta.json";
+    public static final boolean DEBUG = true; //Set to false when releases are made!
+    private static final Logger LOGGER = LogManager.getLogger();
 
-
-    @EventHandler
-    public void preInit(FMLPreInitializationEvent event)
-    {
-        logger = event.getModLog();
+    public Metaverse() {
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::setup);
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::doClientStuff);
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
-    @EventHandler
-    public void init(FMLInitializationEvent event)
-    {
+    private void setup(final FMLCommonSetupEvent event) {
+        if(DEBUG) LOGGER.warn("Debug mode is enabled!");
+        LOGGER.info(MODID+" is setup!");
+    }
 
+    private void doClientStuff(final FMLClientSetupEvent event) {
+        LOGGER.info(MODID+" is now setup on the client!");
     }
 }
