@@ -1,0 +1,8 @@
+{
+  "variants": {
+    "facing=north": { "model": "metaverse:block/breach" },
+    "facing=south": { "model": "metaverse:block/breach", "y": 180 },
+    "facing=west":  { "model": "metaverse:block/breach", "y": 270 },
+    "facing=east":  { "model": "metaverse:block/breach", "y": 90 }
+  }
+}
