@@ -1,5 +1,6 @@
 package dev.revivalmodding.metaverse;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
@@ -23,5 +24,9 @@ public class MetaVerse {
 
     private void clientSetup(FMLClientSetupEvent event) {
 
+    }
+
+    public static ResourceLocation getResource(String path) {
+        return new ResourceLocation(MODID, path);
     }
 }
