@@ -11,6 +11,7 @@ import net.minecraftforge.registries.*;
 
 public class Registry {
 
+    // custom registries
     public static IForgeRegistry<AbilityType<?>> ABILITY_TYPES;
 
     @ObjectHolder(MetaVerse.MODID)

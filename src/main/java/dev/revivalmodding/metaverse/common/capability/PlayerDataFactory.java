@@ -1,6 +1,7 @@
 package dev.revivalmodding.metaverse.common.capability;
 
 import dev.revivalmodding.metaverse.MetaVerse;
+import dev.revivalmodding.metaverse.common.capability.object.Abilities;
 import dev.revivalmodding.metaverse.network.NetworkManager;
 import dev.revivalmodding.metaverse.network.packet.CPacketCapSync;
 import net.minecraft.entity.Entity;
@@ -16,6 +17,7 @@ import net.minecraftforge.fml.common.Mod;
 public class PlayerDataFactory implements PlayerData {
 
     private final PlayerEntity player;
+    private final Abilities abilities;
 
     public static LazyOptional<PlayerData> getCapability(PlayerEntity player) {
         return player.getCapability(PlayerDataProvider.CAP);
@@ -27,6 +29,12 @@ public class PlayerDataFactory implements PlayerData {
 
     public PlayerDataFactory(PlayerEntity player) {
         this.player = player;
+        this.abilities = new Abilities(this);
+    }
+
+    @Override
+    public Abilities getPlayerAbilities() {
+        return abilities;
     }
 
     @Override
@@ -39,12 +47,13 @@ public class PlayerDataFactory implements PlayerData {
     @Override
     public CompoundNBT serializeNBT() {
         CompoundNBT nbt = new CompoundNBT();
+        nbt.put("abilities", abilities.write());
         return nbt;
     }
 
     @Override
     public void deserializeNBT(CompoundNBT nbt) {
-
+        abilities.read(nbt.contains("abilities") ? nbt.getCompound("abilities") : new CompoundNBT());
     }
 
     @Mod.EventBusSubscriber(modid = MetaVerse.MODID)

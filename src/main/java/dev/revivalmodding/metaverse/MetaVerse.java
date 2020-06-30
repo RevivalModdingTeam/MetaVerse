@@ -1,6 +1,6 @@
 package dev.revivalmodding.metaverse;
 
-import dev.revivalmodding.metaverse.common.Registry;
+import dev.revivalmodding.metaverse.network.NetworkManager;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.fml.common.Mod;
@@ -23,7 +23,7 @@ public class MetaVerse {
     }
 
     private void commonSetup(FMLCommonSetupEvent event) {
-
+        NetworkManager.init();
     }
 
     private void clientSetup(FMLClientSetupEvent event) {

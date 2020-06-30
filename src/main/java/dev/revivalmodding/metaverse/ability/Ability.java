@@ -5,7 +5,7 @@ import net.minecraft.nbt.CompoundNBT;
 
 public abstract class Ability {
 
-    private final AbilityType<?> type;
+    private AbilityType<?> type;
 
     public Ability(AbilityType<?> type) {
         this.type = type;
@@ -19,13 +19,23 @@ public abstract class Ability {
         this.type.onUpdate(this, player);
     }
 
+    public void toggle(PlayerEntity player) {
+        this.type.onToggled(this, player);
+    }
+
+    public AbilityType<?> getType() {
+        return type;
+    }
+
     public final CompoundNBT writeNBT() {
         CompoundNBT nbt = new CompoundNBT();
+        type.saveToNBT(nbt);
         nbt.put("customData", writeData());
         return nbt;
     }
 
     public final void readNBT(CompoundNBT nbt) {
+        type = AbilityType.readFromNBT(nbt);
         readData(nbt.contains("customData") ? nbt.getCompound("customData") : new CompoundNBT());
     }
 
