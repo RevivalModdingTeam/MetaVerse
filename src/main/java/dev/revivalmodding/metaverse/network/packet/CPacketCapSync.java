@@ -1,5 +1,6 @@
 package dev.revivalmodding.metaverse.network.packet;
 
+import dev.revivalmodding.metaverse.MetaVerse;
 import dev.revivalmodding.metaverse.common.capability.PlayerData;
 import dev.revivalmodding.metaverse.common.capability.PlayerDataFactory;
 import dev.revivalmodding.metaverse.network.Packet;
@@ -43,7 +44,7 @@ public class CPacketCapSync implements Packet<CPacketCapSync> {
             ClientWorld world = Minecraft.getInstance().world;
             PlayerEntity player = world.getPlayerByUuid(cPacketCapSync.playerUUID);
             if(player == null) {
-                // TODO log error
+                MetaVerse.log.error("Couldn't sync data for player, UUID: {}", cPacketCapSync.playerUUID);
                 return;
             }
             PlayerDataFactory.getCapability(Minecraft.getInstance().player).ifPresent(data -> data.deserializeNBT(cPacketCapSync.data));
