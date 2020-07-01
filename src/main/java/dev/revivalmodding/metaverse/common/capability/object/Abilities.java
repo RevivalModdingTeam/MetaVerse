@@ -1,8 +1,8 @@
 package dev.revivalmodding.metaverse.common.capability.object;
 
 import dev.revivalmodding.metaverse.MetaVerse;
-import dev.revivalmodding.metaverse.ability.Ability;
 import dev.revivalmodding.metaverse.ability.AbilityType;
+import dev.revivalmodding.metaverse.ability.IAbility;
 import dev.revivalmodding.metaverse.common.Registry;
 import dev.revivalmodding.metaverse.common.capability.PlayerData;
 import dev.revivalmodding.metaverse.util.Utils;
@@ -13,18 +13,35 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.util.Constants;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Abilities {
 
     private final PlayerData data;
     private int level;
-    private float xp;
-    private final Ability[] activeAbilities = new Ability[3];
+    private int xp;
+    private final IAbility[] activeAbilities = new IAbility[3];
     private final List<AbilityType<?>> availableTypes = new ArrayList<>();
+    private final Map<ResourceLocation, CompoundNBT> cache = new HashMap<>();
 
     public Abilities(PlayerData data) {
         this.data = data;
+    }
+
+    public void tick() {
+        for(IAbility ability : activeAbilities) {
+            if(ability != null && ability.applyAbility()) {
+                ability.handleTick(data.getOwner());
+            }
+        }
+    }
+
+    public void toggle(int i) {
+        IAbility ability = activeAbilities[i];
+        if(ability == null) return;
+        ability.handleToggled(data.getOwner());
     }
 
     public void activate(AbilityType<?> type) {
@@ -34,16 +51,22 @@ public class Abilities {
             return;
         }
         activeAbilities[id] = type.newInstance();
+        CompoundNBT nbt = loadFromCache(type);
+        if(nbt != null) {
+            activeAbilities[id].readData(nbt);
+        }
         data.sync();
     }
 
     public void deactivate(AbilityType<?> type) {
         for(int i = 0; i < activeAbilities.length; i++) {
-            Ability ability = activeAbilities[i];
+            IAbility ability = activeAbilities[i];
             if(ability == null) continue;
             if(ability.getType().getRegistryName().equals(type.getRegistryName())) {
                 activeAbilities[i] = null;
+                ability.getType().handleDeactivated(data.getOwner());
                 data.sync();
+                cache(ability);
             }
         }
     }
@@ -60,11 +83,11 @@ public class Abilities {
         return level;
     }
 
-    public float getXp() {
+    public int getXp() {
         return xp;
     }
 
-    public Ability[] getActiveAbilities() {
+    public IAbility[] getActiveAbilities() {
         return activeAbilities;
     }
 
@@ -72,25 +95,47 @@ public class Abilities {
         return availableTypes;
     }
 
+    public int getXpRequired() {
+        return 100 + (100 * level) / 2;
+    }
+
+    public int getActiveAbilityCount() {
+        int count = 0;
+        for(IAbility ability : activeAbilities) {
+            if(ability != null) ++count;
+        }
+        return count;
+    }
+
+    // TODO clean
+
     public CompoundNBT write() {
         CompoundNBT nbt = new CompoundNBT();
         nbt.putInt("level", level);
-        nbt.putFloat("xp", xp);
+        nbt.putInt("xp", xp);
+        // active abilities
         ListNBT list = new ListNBT();
         for(int i = 0; i < activeAbilities.length; i++) {
-            Ability ability = activeAbilities[i];
+            IAbility ability = activeAbilities[i];
             if(ability == null) continue;
             CompoundNBT tag = new CompoundNBT();
             tag.putInt("index", i);
-            tag.put("ability", ability.writeNBT());
+            tag.put("ability", ability.writeData());
             list.add(tag);
         }
         nbt.put("active", list);
+        // unlocked abilities
         ListNBT list2 = new ListNBT();
         for(AbilityType<?> type : availableTypes) {
             list2.add(StringNBT.valueOf(type.getRegistryName().toString()));
         }
         nbt.put("available", list2);
+        // ability data cache
+        CompoundNBT cacheNBT = new CompoundNBT();
+        for(Map.Entry<ResourceLocation, CompoundNBT> entry : cache.entrySet()) {
+            cacheNBT.put(entry.getKey().toString(), entry.getValue());
+        }
+        nbt.put("cache", cacheNBT);
         return nbt;
     }
 
@@ -98,16 +143,31 @@ public class Abilities {
         Utils.clear(activeAbilities);
         availableTypes.clear();
         level = nbt.getInt("level");
-        xp = nbt.getFloat("xp");
+        xp = nbt.getInt("xp");
+        // cache
+        if(nbt.contains("cache")) {
+            CompoundNBT cacheNBT = nbt.getCompound("cache");
+            for(String string : cacheNBT.keySet()) {
+                ResourceLocation key = new ResourceLocation(string);
+                if(Registry.ABILITY_TYPES.containsKey(key)) {
+                    cache.put(key, cacheNBT.getCompound(string));
+                }
+            }
+        }
         ListNBT active = nbt.contains("active") ? nbt.getList("active", Constants.NBT.TAG_COMPOUND) : new ListNBT();
         for(int i = 0; i < active.size(); i++) {
             CompoundNBT compoundNBT = active.getCompound(i);
             int index = compoundNBT.getInt("index");
             CompoundNBT ability = compoundNBT.getCompound("ability");
             AbilityType<?> type = AbilityType.readFromNBT(ability);
-            Ability instance = type.newInstance();
-            instance.readNBT(ability);
+            if(type == null) continue;
+            IAbility instance = type.newInstance();
+            instance.readData(ability);
             activeAbilities[index] = instance;
+            CompoundNBT cachedNBT = cache.get(type.getRegistryName());
+            if(cachedNBT != null) {
+                activeAbilities[index].readData(cachedNBT);
+            }
         }
         ListNBT available = nbt.contains("available") ? nbt.getList("available", Constants.NBT.TAG_STRING) : new ListNBT();
         for(int i = 0; i < available.size(); i++) {
@@ -116,5 +176,15 @@ public class Abilities {
             if(type == null) continue;
             availableTypes.add(type);
         }
+    }
+
+    private CompoundNBT loadFromCache(AbilityType<?> type) {
+        return cache.get(type.getRegistryName());
+    }
+
+    private void cache(IAbility ability) {
+        ResourceLocation key = ability.getType().getRegistryName();
+        CompoundNBT data = ability.writeData();
+        this.cache.put(key, data);
     }
 }

@@ -3,6 +3,7 @@ package dev.revivalmodding.metaverse.network;
 import dev.revivalmodding.metaverse.MetaVerse;
 import dev.revivalmodding.metaverse.network.packet.CPacketCapSync;
 import dev.revivalmodding.metaverse.network.packet.SPacketAbilityAction;
+import dev.revivalmodding.metaverse.network.packet.SPacketToggleAbility;
 import net.minecraft.entity.player.ServerPlayerEntity;
 import net.minecraft.server.MinecraftServer;
 import net.minecraftforge.fml.network.NetworkDirection;
@@ -29,6 +30,7 @@ public class NetworkManager {
     public static void init() {
         register(CPacketCapSync.class, new CPacketCapSync());
         register(SPacketAbilityAction.class, new SPacketAbilityAction());
+        register(SPacketToggleAbility.class, new SPacketToggleAbility());
     }
 
     /**

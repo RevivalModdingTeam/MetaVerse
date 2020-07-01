@@ -1,25 +1,46 @@
 package dev.revivalmodding.metaverse.ability;
 
+import dev.revivalmodding.metaverse.ability.interfaces.LevelableAbility;
+import dev.revivalmodding.metaverse.ability.interfaces.UpgradeableAbility;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 
-public class SpeedAbility extends Ability implements LevelableAbility {
+public class SpeedAbility extends AbstractLevelableAbility implements UpgradeableAbility {
 
     protected int speedLevel;
+    protected int maxLevel = 1;
 
-    public SpeedAbility(AbilityType<?> type) {
+    public SpeedAbility(AbilityType<? extends LevelableAbility> type) {
         super(type);
     }
 
     @Override
-    protected CompoundNBT writeData() {
+    public boolean canUpgrade(PlayerEntity player) {
+        return maxLevel < 20;
+    }
+
+    @Override
+    public void upgrade() {
+        ++maxLevel;
+    }
+
+    @Override
+    public int getUpgradeCost() {
+        return maxLevel;
+    }
+
+    @Override
+    protected CompoundNBT writeAdditionalData() {
         CompoundNBT nbt = new CompoundNBT();
         nbt.putInt("level", speedLevel);
+        nbt.putInt("max", maxLevel);
         return nbt;
     }
 
     @Override
-    protected void readData(CompoundNBT nbt) {
+    protected void readAdditionalData(CompoundNBT nbt) {
         speedLevel = nbt.getInt("level");
+        maxLevel = nbt.getInt("max");
     }
 
     @Override
@@ -34,6 +55,6 @@ public class SpeedAbility extends Ability implements LevelableAbility {
 
     @Override
     public int getMaxLevel() {
-        return 20;
+        return maxLevel;
     }
 }

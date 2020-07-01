@@ -33,6 +33,11 @@ public class PlayerDataFactory implements PlayerData {
     }
 
     @Override
+    public void playerTick() {
+        abilities.tick();
+    }
+
+    @Override
     public Abilities getPlayerAbilities() {
         return abilities;
     }
@@ -54,6 +59,11 @@ public class PlayerDataFactory implements PlayerData {
     @Override
     public void deserializeNBT(CompoundNBT nbt) {
         abilities.read(nbt.contains("abilities") ? nbt.getCompound("abilities") : new CompoundNBT());
+    }
+
+    @Override
+    public PlayerEntity getOwner() {
+        return player;
     }
 
     @Mod.EventBusSubscriber(modid = MetaVerse.MODID)

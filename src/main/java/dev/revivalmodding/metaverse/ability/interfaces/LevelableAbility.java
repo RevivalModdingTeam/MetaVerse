@@ -1,4 +1,4 @@
-package dev.revivalmodding.metaverse.ability;
+package dev.revivalmodding.metaverse.ability.interfaces;
 
 public interface LevelableAbility {
 
