@@ -6,6 +6,7 @@ import dev.revivalmodding.metaverse.ability.BasicAbility;
 import dev.revivalmodding.metaverse.ability.BasicCooldownAbility;
 import dev.revivalmodding.metaverse.ability.SpeedAbility;
 import net.minecraft.block.Block;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.event.RegistryEvent;
@@ -80,6 +81,28 @@ public class Registry {
                             .price(1)
                             .icon("ability_water_running")
                             .displayName("water_running")
+                            .onUpdate((ability, player) -> {
+                                if(player.isSprinting() && !player.isInWater() && player.world.getFluidState(player.getPosition().add(0, -0.1, 0)).isTagged(FluidTags.WATER)) {
+                                    Vec3d vec3d = player.getMotion();
+                                    player.setMotion(vec3d.x, 0, vec3d.z);
+                                    player.fallDistance = 0.0F;
+                                    player.onGround = true;
+                                }
+                            })
+                            .build(),
+                    new AbilityType.Builder<>(BasicAbility::new)
+                            .name(MetaVerse.getResource("phasing"))
+                            .price(6)
+                            .icon("ability_phasing")
+                            .displayName("phasing")
+                            .onLivingUpdate((ability, player) -> {
+                                if(player.world.getBlockState(player.getPosition().add(0, -0.1, 0)).getMaterial().isSolid()) {
+                                    player.noClip = true;
+                                    Vec3d vec3d = player.getMotion();
+                                    player.setMotion(vec3d.x, 0, vec3d.z);
+                                    player.onGround = true;
+                                }
+                            })
                             .build()
             );
         }

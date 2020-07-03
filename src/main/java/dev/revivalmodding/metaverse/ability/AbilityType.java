@@ -18,6 +18,7 @@ public class AbilityType<T extends IAbility> extends ForgeRegistryEntry<AbilityT
 
     private final IFactory<T> factory;
     private final BiConsumer<T, PlayerEntity> tickHandler;
+    private final BiConsumer<T, PlayerEntity> livingTickHandler;
     private final BiConsumer<T, PlayerEntity> onToggle;
     private final Consumer<PlayerEntity> onDeactivated;
     private final Predicate<PlayerEntity> canActivate;
@@ -28,6 +29,7 @@ public class AbilityType<T extends IAbility> extends ForgeRegistryEntry<AbilityT
     private AbilityType(Builder<T> builder) {
         this.factory = builder.factory;
         this.tickHandler = builder.tickHandler;
+        this.livingTickHandler = builder.livingUpdateHandler;
         this.onToggle = builder.onToglePress;
         this.onDeactivated = builder.onDeactivated;
         this.canActivate = builder.canActivate;
@@ -38,6 +40,10 @@ public class AbilityType<T extends IAbility> extends ForgeRegistryEntry<AbilityT
 
     public void onUpdate(IAbility ability, PlayerEntity player) {
         this.tickHandler.accept((T) ability, player);
+    }
+
+    public void onLivingUpdate(IAbility ability, PlayerEntity player) {
+        this.livingTickHandler.accept((T) ability, player);
     }
 
     public void onToggled(IAbility ability, PlayerEntity player) {
@@ -87,6 +93,7 @@ public class AbilityType<T extends IAbility> extends ForgeRegistryEntry<AbilityT
         private final IFactory<T> factory;
         private ResourceLocation registryName;
         private BiConsumer<T, PlayerEntity> tickHandler = (ability, player) -> {};
+        private BiConsumer<T, PlayerEntity> livingUpdateHandler = (ability, player) -> {};
         private Predicate<PlayerEntity> canActivate = player -> true;
         private BiConsumer<T, PlayerEntity> onToglePress = (ability, player) -> {};
         private Consumer<PlayerEntity> onDeactivated = player -> {};
@@ -105,6 +112,11 @@ public class AbilityType<T extends IAbility> extends ForgeRegistryEntry<AbilityT
 
         public Builder<T> onUpdate(BiConsumer<T, PlayerEntity> onUpdate) {
             this.tickHandler = onUpdate;
+            return this;
+        }
+
+        public Builder<T> onLivingUpdate(BiConsumer<T, PlayerEntity> livingUpdateHandler) {
+            this.livingUpdateHandler = livingUpdateHandler;
             return this;
         }
 

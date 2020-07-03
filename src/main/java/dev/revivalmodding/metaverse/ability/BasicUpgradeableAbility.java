@@ -74,6 +74,11 @@ public class BasicUpgradeableAbility implements IAbility, UpgradeableAbility {
     }
 
     @Override
+    public void handleLivingUpdate(PlayerEntity player) {
+        getType().onLivingUpdate(this, player);
+    }
+
+    @Override
     public void handleDeactivated(PlayerEntity player) {
         getType().handleDeactivated(player);
     }

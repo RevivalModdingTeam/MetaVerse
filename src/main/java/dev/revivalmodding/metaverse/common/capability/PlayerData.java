@@ -13,5 +13,7 @@ public interface PlayerData extends INBTSerializable<CompoundNBT> {
 
     void playerTick();
 
+    void livingTick();
+
     PlayerEntity getOwner();
 }

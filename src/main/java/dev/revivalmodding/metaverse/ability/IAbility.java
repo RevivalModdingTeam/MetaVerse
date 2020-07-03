@@ -13,6 +13,8 @@ public interface IAbility {
 
     void handleTick(PlayerEntity player);
 
+    void handleLivingUpdate(PlayerEntity player);
+
     void handleToggled(PlayerEntity player);
 
     void handleDeactivated(PlayerEntity player);

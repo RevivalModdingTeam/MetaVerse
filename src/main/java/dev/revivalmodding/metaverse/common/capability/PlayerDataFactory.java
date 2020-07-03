@@ -38,6 +38,11 @@ public class PlayerDataFactory implements PlayerData {
     }
 
     @Override
+    public void livingTick() {
+        abilities.livingTick();
+    }
+
+    @Override
     public Abilities getPlayerAbilities() {
         return abilities;
     }

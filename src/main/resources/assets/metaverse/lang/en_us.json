@@ -2,5 +2,6 @@
     "ability.speed": "Super speed",
     "ability.wall_running": "Wall running",
     "ability.water_running": "Water running",
-    "ability.lightning_throw": "Lightning throw"
+    "ability.lightning_throw": "Lightning throw",
+    "ability.phasing": "Phasing"
 }

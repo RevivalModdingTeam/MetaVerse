@@ -42,6 +42,14 @@ public class Abilities {
         }
     }
 
+    public void livingTick() {
+        for(IAbility ability : activeAbilities) {
+            if(ability != null && ability.applyAbility()) {
+                ability.handleLivingUpdate(data.getOwner());
+            }
+        }
+    }
+
     void levelUp() {
         ++level;
         xp = 0;

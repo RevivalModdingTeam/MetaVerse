@@ -23,6 +23,11 @@ public class BasicAbility implements IAbility {
     }
 
     @Override
+    public void handleLivingUpdate(PlayerEntity player) {
+        getType().onLivingUpdate(this, player);
+    }
+
+    @Override
     public void handleToggled(PlayerEntity player) {
         active = !active;
         getType().onToggled(this, player);

@@ -23,6 +23,11 @@ public class BasicCooldownAbility implements IAbility, CooldownAbility {
     }
 
     @Override
+    public void handleLivingUpdate(PlayerEntity player) {
+        getType().onLivingUpdate(this, player);
+    }
+
+    @Override
     public float getCooldownProgress() {
         return cooldownTicks / (float) cooldown;
     }
