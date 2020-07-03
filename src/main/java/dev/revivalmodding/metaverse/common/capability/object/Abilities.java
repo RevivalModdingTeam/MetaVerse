@@ -31,11 +31,21 @@ public class Abilities {
     }
 
     public void tick() {
+        float required = getXpRequired();
+        if(!data.getOwner().world.isRemote && xp >= required) {
+            levelUp();
+        }
         for(IAbility ability : activeAbilities) {
             if(ability != null && ability.applyAbility()) {
                 ability.handleTick(data.getOwner());
             }
         }
+    }
+
+    void levelUp() {
+        ++level;
+        xp = 0;
+        data.sync();
     }
 
     public void toggle(int i) {
@@ -67,6 +77,7 @@ public class Abilities {
                 ability.getType().handleDeactivated(data.getOwner());
                 data.sync();
                 cache(ability);
+                break;
             }
         }
     }
@@ -77,6 +88,10 @@ public class Abilities {
             level -= type.getPrice();
             data.sync();
         }
+    }
+
+    public void lock(AbilityType<?> type) {
+        availableTypes.remove(type);
     }
 
     public int getLevel() {
@@ -97,6 +112,14 @@ public class Abilities {
 
     public int getXpRequired() {
         return 100 + (100 * level) / 2;
+    }
+
+    public void setLevel(int level) {
+        this.level = level;
+    }
+
+    public void setXp(int xp) {
+        this.xp = xp;
     }
 
     public int getActiveAbilityCount() {
@@ -120,6 +143,7 @@ public class Abilities {
             if(ability == null) continue;
             CompoundNBT tag = new CompoundNBT();
             tag.putInt("index", i);
+            cache(ability);
             tag.put("ability", ability.writeData());
             list.add(tag);
         }

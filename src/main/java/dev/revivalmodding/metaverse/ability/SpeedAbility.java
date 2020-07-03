@@ -8,7 +8,7 @@ import net.minecraft.nbt.CompoundNBT;
 public class SpeedAbility extends AbstractLevelableAbility implements UpgradeableAbility {
 
     protected int speedLevel;
-    protected int maxLevel = 1;
+    protected int maxLevel = 10;
 
     public SpeedAbility(AbilityType<? extends LevelableAbility> type) {
         super(type);

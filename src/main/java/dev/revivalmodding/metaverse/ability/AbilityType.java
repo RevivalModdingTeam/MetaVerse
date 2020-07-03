@@ -77,6 +77,11 @@ public class AbilityType<T extends IAbility> extends ForgeRegistryEntry<AbilityT
         return Registry.ABILITY_TYPES.getValue(location);
     }
 
+    @Override
+    public String toString() {
+        return getRegistryName().toString();
+    }
+
     public static class Builder<T extends IAbility> {
 
         private final IFactory<T> factory;

@@ -60,6 +60,9 @@ public abstract class AbstractLevelableAbility implements IAbility, LevelableAbi
         int next = ability.getCurrentLevel() + i;
         if(next >= 0 && next <= ability.getMaxLevel()) {
             ability.setLevel(next);
+            if(next == 0) {
+                ability.handleDeactivated(player);
+            }
         }
     }
 }

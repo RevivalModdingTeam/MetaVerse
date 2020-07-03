@@ -13,6 +13,7 @@ import dev.revivalmodding.metaverse.util.Utils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.screen.Screen;
+import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.Button;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
@@ -57,11 +58,15 @@ public class AbilityScreen extends Screen {
         RenderUtils.renderTexture(left, top, left + xSize, top + ySize, 0.0F, 0.0F, 200/255F, 180/255F, BACKGROUND);
         font.drawString(minecraft.player.getName().getFormattedText(), left + 10, top + 10, 0x333333);
         RenderUtils.renderColor(left + 80, top + 10, left + 160, top + 18, 0.4F, 0.4F, 0.4F, 1.0F);
+        int currentXp = playerAbilities.getXp();
+        int requiredXp = playerAbilities.getXpRequired();
         int level = playerAbilities.getLevel();
+        float levelProgress = currentXp / (float) requiredXp;
+        RenderUtils.renderColor(left + 80, top + 10, left + 80 + (int) (80 * levelProgress), top + 18, 0.9F, 0.9F, 0.0F, 1.0F);
         String levelString = level + "";
         font.drawString(levelString, left + 77 - font.getStringWidth(levelString), top + 10, 0xFF8800);
         font.drawString(1 + level + "", left + 163, top + 10, 0xFF8800);
-        String xpInfo = String.format("%d/%d XP", playerAbilities.getXp(), playerAbilities.getXpRequired());
+        String xpInfo = String.format("%d/%d XP", currentXp, requiredXp);
         font.drawString(xpInfo, left + 80 + (80 - font.getStringWidth(xpInfo)) / 2f, top + 20, 0xFFFFFF);
         renderScrollbar(left + 184, 7);
         font.drawStringWithShadow(String.format("Active: %d/3", playerAbilities.getActiveAbilityCount()), left + 10, top + 35, 0xFFFF00);
@@ -87,6 +92,19 @@ public class AbilityScreen extends Screen {
         double start = scrollOffset * step;
         double end = Math.min(barHeight, (scrollOffset + 5) * step);
         RenderUtils.renderColor(x + 1, (int)(top + 50 + start), x + width - 1, (int)(top + 50 + end), 0.75F, 0.75F, 0.75F, 1.0F);
+    }
+
+    @Override
+    public boolean mouseClicked(double mouseX, double mouseY, int mouseButton) {
+        if(mouseButton == 0) {
+            for(Widget widget : buttons) {
+                if(widget.mouseClicked(mouseX, mouseY, mouseButton)) {
+                    widget.onClick(mouseX, mouseY);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     static class AbilityButton extends Button {

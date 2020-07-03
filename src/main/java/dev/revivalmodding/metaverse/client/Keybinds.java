@@ -2,6 +2,7 @@ package dev.revivalmodding.metaverse.client;
 
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
+import org.lwjgl.glfw.GLFW;
 
 public class Keybinds {
 
@@ -11,10 +12,10 @@ public class Keybinds {
     public static KeyBinding ability3;
 
     public static void init() {
-        abilityScreen = register("abilities", 89);
-        ability1 = register("ability1", 73);
-        ability2 = register("ability2", 79);
-        ability3 = register("ability3", 80);
+        abilityScreen = register("abilities", GLFW.GLFW_KEY_Z);
+        ability1 = register("ability1", GLFW.GLFW_KEY_I);
+        ability2 = register("ability2", GLFW.GLFW_KEY_O);
+        ability3 = register("ability3", GLFW.GLFW_KEY_P);
     }
 
     private static KeyBinding register(String key, int code) {
