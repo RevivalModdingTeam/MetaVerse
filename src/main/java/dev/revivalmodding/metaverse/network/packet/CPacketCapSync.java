@@ -1,6 +1,7 @@
 package dev.revivalmodding.metaverse.network.packet;
 
 import dev.revivalmodding.metaverse.MetaVerse;
+import dev.revivalmodding.metaverse.client.ClientEventHandler;
 import dev.revivalmodding.metaverse.common.capability.PlayerData;
 import dev.revivalmodding.metaverse.common.capability.PlayerDataFactory;
 import dev.revivalmodding.metaverse.network.Packet;
@@ -48,6 +49,7 @@ public class CPacketCapSync implements Packet<CPacketCapSync> {
                 return;
             }
             PlayerDataFactory.getCapability(Minecraft.getInstance().player).ifPresent(data -> data.deserializeNBT(cPacketCapSync.data));
+            ClientEventHandler.onPlayerCapUpdated();
         });
         ctx.get().setPacketHandled(true);
     }

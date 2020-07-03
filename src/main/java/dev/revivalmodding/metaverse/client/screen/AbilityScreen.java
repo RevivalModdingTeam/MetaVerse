@@ -2,11 +2,14 @@ package dev.revivalmodding.metaverse.client.screen;
 
 import dev.revivalmodding.metaverse.MetaVerse;
 import dev.revivalmodding.metaverse.ability.AbilityType;
+import dev.revivalmodding.metaverse.ability.IAbility;
+import dev.revivalmodding.metaverse.ability.interfaces.UpgradeableAbility;
 import dev.revivalmodding.metaverse.common.Registry;
 import dev.revivalmodding.metaverse.common.capability.PlayerDataFactory;
 import dev.revivalmodding.metaverse.common.capability.object.Abilities;
 import dev.revivalmodding.metaverse.network.NetworkManager;
 import dev.revivalmodding.metaverse.network.packet.SPacketAbilityAction;
+import dev.revivalmodding.metaverse.network.packet.SPacketUpgradeAbility;
 import dev.revivalmodding.metaverse.util.AbilityHelper;
 import dev.revivalmodding.metaverse.util.RenderUtils;
 import dev.revivalmodding.metaverse.util.Utils;
@@ -39,6 +42,7 @@ public class AbilityScreen extends Screen {
         allTypes.sort(Comparator.comparingInt(AbilityType::getPrice));
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     protected void init() {
         buttons.clear();
@@ -48,7 +52,13 @@ public class AbilityScreen extends Screen {
         for(int i = scrollOffset; i < scrollOffset + 5; i++) {
             if(i >= allTypes.size()) break;
             int n = i - scrollOffset;
-            addButton(new AbilityButton(left + 10, top + 50 + 25 * n, 150, 20, this, playerAbilities, allTypes.get(i)));
+            AbilityType<?> type = allTypes.get(i);
+            IAbility ability = type.newInstance();
+            AbilityButton button = new AbilityButton(left + 10, top + 50 + 25 * n, 150, 20, this, playerAbilities, type);
+            addButton(button);
+            if(button.state == AbilityButton.State.TO_DEACTIVATE && ability instanceof UpgradeableAbility) {
+                addButton(new UpgradeAbilityButton(left + 161, top + 50 + 25 * n, 20, 20, playerAbilities, (AbilityType<? extends UpgradeableAbility>) type, button));
+            }
         }
     }
 
@@ -99,12 +109,64 @@ public class AbilityScreen extends Screen {
         if(mouseButton == 0) {
             for(Widget widget : buttons) {
                 if(widget.mouseClicked(mouseX, mouseY, mouseButton)) {
-                    widget.onClick(mouseX, mouseY);
                     return true;
                 }
             }
         }
         return false;
+    }
+
+    static class UpgradeAbilityButton extends Button {
+
+        static final ResourceLocation TEXTURE = MetaVerse.getResource("textures/ui/upgradebutton.png");
+        final UpgradeableAbility upgradeableAbility;
+        final AbilityType<? extends UpgradeableAbility> type;
+        final Abilities abilities;
+        final boolean canPurchase;
+        final AbilityButton parent;
+        final int index;
+
+        public UpgradeAbilityButton(int x, int y, int w, int h, Abilities abilities, AbilityType<? extends UpgradeableAbility> type, AbilityButton parent) {
+            super(x, y, w, h, "", UpgradeAbilityButton::pressed);
+            this.abilities = abilities;
+            this.type = type;
+            UpgradeableAbility tmp = null;
+            int iTmp = 0;
+            for(int i = 0; i < abilities.getActiveAbilities().length; i++) {
+                IAbility ability = abilities.getActiveAbilities()[i];
+                if(ability.getType().getRegistryName().equals(type.getRegistryName()) && ability instanceof UpgradeableAbility) {
+                    tmp = (UpgradeableAbility) ability;
+                    iTmp = i;
+                    break;
+                }
+            }
+            upgradeableAbility = tmp;
+            index = iTmp;
+            this.canPurchase = upgradeableAbility != null && upgradeableAbility.canUpgrade(Minecraft.getInstance().player);
+            this.parent = parent;
+        }
+
+        @Override
+        public void render(int mouseX, int mouseY, float partialTicks) {
+            boolean hovered = mouseX >= x && mouseX <= x + width && mouseY >= y && mouseY <= y + height;
+            int color = parent.state.getColor().getValue(hovered);
+            float alpha = ((color >> 24) & 0xff) / 255.0F;
+            float red = ((color >> 16) & 0xff) / 255.0F;
+            float green = ((color >> 8) & 0xff) / 255.0F;
+            float blue = (color & 0xff) / 255.0F;
+            RenderUtils.renderColoredTexture(x, y, x + width, y + height, red, green, blue, alpha, TEXTURE);
+            FontRenderer renderer = Minecraft.getInstance().fontRenderer;
+            String level = upgradeableAbility.getMaxLevel() + "";
+            int textColor = 0xFFFFFF;
+            renderer.drawStringWithShadow(level, x + (20 - renderer.getStringWidth(level)) / 2.0F, y + 6, textColor);
+        }
+
+        static void pressed(Button button) {
+            UpgradeAbilityButton abilityButton = (UpgradeAbilityButton) button;
+            if(abilityButton.canPurchase) {
+                NetworkManager.sendServerPacket(new SPacketUpgradeAbility(abilityButton.index));
+            }
+        }
     }
 
     static class AbilityButton extends Button {
@@ -167,7 +229,7 @@ public class AbilityScreen extends Screen {
             UNAVAILABLE(new HoveredColor(0xFF222222)),
             UNLOCKABLE(new HoveredColor(0xFF55FF55, 0xFF00FF00)),
             TO_ACTIVATE(new HoveredColor(0xFFBBBB00, 0xFFFFFF00)),
-            TO_DEACTIVATE(new HoveredColor(0xFFFF3333, 0xFFFFFFFF));
+            TO_DEACTIVATE(new HoveredColor(0xFFFF3333, 0xFFFF0000));
 
             final HoveredColor color;
 

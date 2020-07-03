@@ -8,7 +8,6 @@ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import dev.revivalmodding.metaverse.ability.AbilityType;
-import dev.revivalmodding.metaverse.ability.IAbility;
 import dev.revivalmodding.metaverse.common.Registry;
 import dev.revivalmodding.metaverse.common.capability.PlayerData;
 import dev.revivalmodding.metaverse.common.capability.PlayerDataFactory;
@@ -81,7 +80,6 @@ public class MetaVerseCommand {
                 throw ALREADY_LOCKED.create();
             }
             abilities.lock(type);
-            abilities.deactivate(type);
             ctx.getSource().sendFeedback(new StringTextComponent("Sucessfully locked " + type.getDisplayName().getFormattedText() + " ability"), true);
         } else {
             if(abilities.getAvailableTypes().contains(type)) {

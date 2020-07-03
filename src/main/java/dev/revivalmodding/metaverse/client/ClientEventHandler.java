@@ -93,4 +93,12 @@ public class ClientEventHandler {
             }
         });
     }
+
+    public static void onPlayerCapUpdated() {
+        Minecraft mc = Minecraft.getInstance();
+        if(mc.currentScreen instanceof AbilityScreen) {
+            MainWindow window = mc.getMainWindow();
+            mc.currentScreen.init(mc, window.getScaledWidth(), window.getScaledHeight());
+        }
+    }
 }

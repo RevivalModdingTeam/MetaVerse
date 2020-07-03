@@ -84,6 +84,7 @@ public class Abilities {
 
     public void unlock(AbilityType<?> type) {
         if(!availableTypes.contains(type)) {
+            cache.remove(type.getRegistryName());
             availableTypes.add(type);
             level -= type.getPrice();
             data.sync();
@@ -91,7 +92,9 @@ public class Abilities {
     }
 
     public void lock(AbilityType<?> type) {
+        deactivate(type);
         availableTypes.remove(type);
+        cache.remove(type.getRegistryName());
     }
 
     public int getLevel() {
@@ -129,8 +132,6 @@ public class Abilities {
         }
         return count;
     }
-
-    // TODO clean
 
     public CompoundNBT write() {
         CompoundNBT nbt = new CompoundNBT();
@@ -206,7 +207,7 @@ public class Abilities {
         return cache.get(type.getRegistryName());
     }
 
-    private void cache(IAbility ability) {
+    public void cache(IAbility ability) {
         ResourceLocation key = ability.getType().getRegistryName();
         CompoundNBT data = ability.writeData();
         this.cache.put(key, data);

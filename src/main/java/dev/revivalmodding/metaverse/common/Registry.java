@@ -6,7 +6,6 @@ import dev.revivalmodding.metaverse.ability.BasicAbility;
 import dev.revivalmodding.metaverse.ability.BasicCooldownAbility;
 import dev.revivalmodding.metaverse.ability.SpeedAbility;
 import net.minecraft.block.Block;
-import net.minecraft.block.material.Material;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.event.RegistryEvent;
@@ -39,7 +38,7 @@ public class Registry {
 
         @SubscribeEvent
         public static void registerBlocks(RegistryEvent.Register<Block> event) {
-            event.getRegistry().register(new Block(Block.Properties.create(Material.IRON)).setRegistryName("test"));
+
         }
 
         @SubscribeEvent
