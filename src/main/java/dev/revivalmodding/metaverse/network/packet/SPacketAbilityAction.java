@@ -1,6 +1,6 @@
 package dev.revivalmodding.metaverse.network.packet;
 
-import dev.revivalmodding.metaverse.ability.AbilityType;
+import dev.revivalmodding.metaverse.ability.core.AbilityType;
 import dev.revivalmodding.metaverse.common.Registry;
 import dev.revivalmodding.metaverse.common.capability.PlayerDataFactory;
 import dev.revivalmodding.metaverse.common.capability.object.Abilities;

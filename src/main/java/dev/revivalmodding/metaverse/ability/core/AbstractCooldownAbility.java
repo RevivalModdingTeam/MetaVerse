@@ -1,19 +1,19 @@
-package dev.revivalmodding.metaverse.ability;
+package dev.revivalmodding.metaverse.ability.core;
 
 import dev.revivalmodding.metaverse.ability.interfaces.CooldownAbility;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 
-public class BasicCooldownAbility implements IAbility, CooldownAbility {
+public abstract class AbstractCooldownAbility implements IAbility, CooldownAbility {
 
     private AbilityType<?> type;
     private int cooldownTicks;
-    private final int cooldown;
 
-    public BasicCooldownAbility(AbilityType<?> type, int cooldownTime) {
+    public AbstractCooldownAbility(AbilityType<?> type) {
         this.type = type;
-        this.cooldown = cooldownTime;
     }
+
+    public abstract int getMaxCooldown();
 
     @Override
     public void handleTick(PlayerEntity player) {
@@ -29,7 +29,7 @@ public class BasicCooldownAbility implements IAbility, CooldownAbility {
 
     @Override
     public float getCooldownProgress() {
-        return cooldownTicks / (float) cooldown;
+        return cooldownTicks / (float) getMaxCooldown();
     }
 
     @Override
@@ -46,7 +46,7 @@ public class BasicCooldownAbility implements IAbility, CooldownAbility {
     public void handleToggled(PlayerEntity player) {
         if(!isOnCooldown()) {
             getType().onToggled(this, player);
-            this.cooldownTicks = cooldown;
+            this.cooldownTicks = getMaxCooldown();
         }
     }
 

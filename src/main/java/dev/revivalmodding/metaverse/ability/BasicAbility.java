@@ -1,5 +1,7 @@
 package dev.revivalmodding.metaverse.ability;
 
+import dev.revivalmodding.metaverse.ability.core.AbilityType;
+import dev.revivalmodding.metaverse.ability.core.IAbility;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 

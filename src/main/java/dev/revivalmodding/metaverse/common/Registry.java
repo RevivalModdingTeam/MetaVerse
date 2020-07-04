@@ -1,11 +1,14 @@
 package dev.revivalmodding.metaverse.common;
 
 import dev.revivalmodding.metaverse.MetaVerse;
-import dev.revivalmodding.metaverse.ability.AbilityType;
+import dev.revivalmodding.metaverse.ability.LightningThrowAbility;
+import dev.revivalmodding.metaverse.ability.core.AbilityType;
 import dev.revivalmodding.metaverse.ability.BasicAbility;
-import dev.revivalmodding.metaverse.ability.BasicCooldownAbility;
 import dev.revivalmodding.metaverse.ability.SpeedAbility;
+import dev.revivalmodding.metaverse.common.entity.LightningProjectile;
 import net.minecraft.block.Block;
+import net.minecraft.entity.EntityClassification;
+import net.minecraft.entity.EntityType;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
@@ -27,6 +30,11 @@ public class Registry {
         public static final AbilityType<BasicAbility> WATER_RUNNING = null;
     }
 
+    @ObjectHolder(MetaVerse.MODID)
+    public static final class EntityTypes {
+        public static final EntityType<?> LIGHTNING_PROJECTILE = null;
+    }
+
     @Mod.EventBusSubscriber(modid = MetaVerse.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class Handler {
 
@@ -40,6 +48,13 @@ public class Registry {
         @SubscribeEvent
         public static void registerBlocks(RegistryEvent.Register<Block> event) {
 
+        }
+
+        @SubscribeEvent
+        public static void registerEntityTypes(RegistryEvent.Register<EntityType<?>> event) {
+            event.getRegistry().registerAll(
+                    EntityType.Builder.create(LightningProjectile::new, EntityClassification.MISC).setTrackingRange(128).setUpdateInterval(1).setShouldReceiveVelocityUpdates(true).size(0.2F, 0.2F).build("metaverse:lightning_projectile").setRegistryName(MetaVerse.getResource("lightning_projectile"))
+            );
         }
 
         @SubscribeEvent
@@ -70,11 +85,12 @@ public class Registry {
                                 }
                             })
                             .build(),
-                    new AbilityType.Builder<>(type -> new BasicCooldownAbility(type, 200))
+                    new AbilityType.Builder<>(LightningThrowAbility::new)
                             .name(MetaVerse.getResource("lightning_throw"))
                             .price(10)
                             .icon("ability_lightning_throw")
                             .displayName("lightning_throw")
+                            .onToggled((ability, player) -> LightningProjectile.shoot(player.world, player, 5))
                             .build(),
                     new AbilityType.Builder<>(BasicAbility::new)
                             .name(MetaVerse.getResource("water_running"))

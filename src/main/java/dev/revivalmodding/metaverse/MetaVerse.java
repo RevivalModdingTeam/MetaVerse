@@ -2,17 +2,19 @@ package dev.revivalmodding.metaverse;
 
 import com.mojang.brigadier.CommandDispatcher;
 import dev.revivalmodding.metaverse.client.Keybinds;
+import dev.revivalmodding.metaverse.client.render.NoopEntityRenderer;
+import dev.revivalmodding.metaverse.common.Registry;
 import dev.revivalmodding.metaverse.common.capability.PlayerData;
 import dev.revivalmodding.metaverse.common.capability.PlayerDataFactory;
 import dev.revivalmodding.metaverse.common.capability.PlayerDataStorage;
 import dev.revivalmodding.metaverse.common.command.MetaVerseCommand;
 import dev.revivalmodding.metaverse.network.NetworkManager;
-import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandSource;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.fml.client.registry.RenderingRegistry;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -42,6 +44,7 @@ public class MetaVerse {
 
     private void clientSetup(FMLClientSetupEvent event) {
         Keybinds.init();
+        RenderingRegistry.registerEntityRenderingHandler(Registry.EntityTypes.LIGHTNING_PROJECTILE, NoopEntityRenderer::new);
     }
 
     private void serverStart(FMLServerStartingEvent event) {

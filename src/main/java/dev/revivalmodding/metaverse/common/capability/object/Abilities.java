@@ -1,8 +1,8 @@
 package dev.revivalmodding.metaverse.common.capability.object;
 
 import dev.revivalmodding.metaverse.MetaVerse;
-import dev.revivalmodding.metaverse.ability.AbilityType;
-import dev.revivalmodding.metaverse.ability.IAbility;
+import dev.revivalmodding.metaverse.ability.core.AbilityType;
+import dev.revivalmodding.metaverse.ability.core.IAbility;
 import dev.revivalmodding.metaverse.common.Registry;
 import dev.revivalmodding.metaverse.common.capability.PlayerData;
 import dev.revivalmodding.metaverse.util.Utils;

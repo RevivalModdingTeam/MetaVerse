@@ -1,66 +1,33 @@
-package dev.revivalmodding.metaverse.ability;
+package dev.revivalmodding.metaverse.ability.core;
 
 import dev.revivalmodding.metaverse.ability.interfaces.LevelableAbility;
-import dev.revivalmodding.metaverse.ability.interfaces.UpgradeableAbility;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 
-public class BasicUpgradeableAbility implements IAbility, UpgradeableAbility {
+public abstract class AbstractLevelableAbility implements IAbility, LevelableAbility {
 
     private AbilityType<?> type;
-    private int level;
-    private int maxCurrentLevel = 1;
-    private final int maxLevel;
 
-    public BasicUpgradeableAbility(AbilityType<?> type, int maxLevel) {
+    public AbstractLevelableAbility(AbilityType<?> type) {
         this.type = type;
-        this.maxLevel = maxLevel;
     }
 
-    @Override
-    public boolean canUpgrade(PlayerEntity player) {
-        return level < maxCurrentLevel && maxCurrentLevel < maxLevel;
-    }
+    protected abstract CompoundNBT writeAdditionalData();
 
-    @Override
-    public int getUpgradeCost() {
-        return maxCurrentLevel;
-    }
-
-    @Override
-    public void upgrade() {
-        maxCurrentLevel++;
-    }
-
-    @Override
-    public int getMaxLevel() {
-        return maxCurrentLevel;
-    }
-
-    @Override
-    public int getCurrentLevel() {
-        return level;
-    }
-
-    @Override
-    public void setLevel(int level) {
-        this.level = level;
-    }
+    protected abstract void readAdditionalData(CompoundNBT nbt);
 
     @Override
     public CompoundNBT writeData() {
         CompoundNBT nbt = new CompoundNBT();
         getType().saveToNBT(nbt);
-        nbt.putInt("level", level);
-        nbt.putInt("maxLevel", maxCurrentLevel);
+        nbt.put("extra", writeAdditionalData());
         return nbt;
     }
 
     @Override
     public void readData(CompoundNBT nbt) {
         type = AbilityType.readFromNBT(nbt);
-        level = nbt.getInt("level");
-        maxCurrentLevel = nbt.getInt("maxLevel");
+        readAdditionalData(nbt.contains("extra") ? nbt.getCompound("extra") : new CompoundNBT());
     }
 
     @Override

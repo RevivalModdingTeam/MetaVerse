@@ -1,6 +1,6 @@
 package dev.revivalmodding.metaverse.network.packet;
 
-import dev.revivalmodding.metaverse.ability.IAbility;
+import dev.revivalmodding.metaverse.ability.core.IAbility;
 import dev.revivalmodding.metaverse.ability.interfaces.UpgradeableAbility;
 import dev.revivalmodding.metaverse.common.capability.PlayerDataFactory;
 import dev.revivalmodding.metaverse.common.capability.object.Abilities;

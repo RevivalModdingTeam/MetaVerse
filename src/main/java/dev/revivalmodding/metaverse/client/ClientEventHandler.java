@@ -1,7 +1,7 @@
 package dev.revivalmodding.metaverse.client;
 
 import dev.revivalmodding.metaverse.MetaVerse;
-import dev.revivalmodding.metaverse.ability.IAbility;
+import dev.revivalmodding.metaverse.ability.core.IAbility;
 import dev.revivalmodding.metaverse.ability.interfaces.CooldownAbility;
 import dev.revivalmodding.metaverse.ability.interfaces.InfoRenderer;
 import dev.revivalmodding.metaverse.ability.interfaces.LevelableAbility;

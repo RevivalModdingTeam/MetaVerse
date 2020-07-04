@@ -1,4 +1,4 @@
-package dev.revivalmodding.metaverse.ability;
+package dev.revivalmodding.metaverse.ability.core;
 
 import dev.revivalmodding.metaverse.MetaVerse;
 import dev.revivalmodding.metaverse.common.Registry;
