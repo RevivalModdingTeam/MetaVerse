@@ -93,7 +93,9 @@ public class PlayerDataFactory implements PlayerData {
             if(!original.isPresent() || !newCap.isPresent()) {
                 return;
             }
-            newCap.orElse(null).deserializeNBT(original.orElse(null).serializeNBT());
+            PlayerData newData = newCap.orElse(null);
+            newData.deserializeNBT(original.orElse(null).serializeNBT());
+            newData.sync();
         }
     }
 }

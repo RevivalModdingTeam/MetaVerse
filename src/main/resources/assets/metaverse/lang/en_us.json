@@ -3,5 +3,11 @@
     "ability.wall_running": "Wall running",
     "ability.water_running": "Water running",
     "ability.lightning_throw": "Lightning throw",
-    "ability.phasing": "Phasing"
+    "ability.phasing": "Phasing",
+
+    "metaverse.key.category": "MetaVerse",
+    "metaverse.key.abilities": "Display abilities",
+    "metaverse.key.ability1": "Use ability 1",
+    "metaverse.key.ability2": "Use ability 2",
+    "metaverse.key.ability3": "Use ability 3"
 }

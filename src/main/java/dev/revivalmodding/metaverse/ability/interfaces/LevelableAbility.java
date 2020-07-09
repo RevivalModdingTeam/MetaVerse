@@ -7,4 +7,8 @@ public interface LevelableAbility {
     int getCurrentLevel();
 
     void setLevel(int level);
+
+    default boolean shouldDisplayCurrentLevel() {
+        return true;
+    }
 }

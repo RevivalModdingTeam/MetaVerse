@@ -18,8 +18,8 @@ public abstract class AbstractUpgradeableAbility implements IAbility, Upgradeabl
     public abstract int getLevelLimit();
 
     @Override
-    public boolean canUpgrade(PlayerEntity player) {
-        return level < maxCurrentLevel && maxCurrentLevel < getLevelLimit();
+    public boolean isMaxedOut() {
+        return maxCurrentLevel == getLevelLimit();
     }
 
     @Override
@@ -60,7 +60,7 @@ public abstract class AbstractUpgradeableAbility implements IAbility, Upgradeabl
     public void readData(CompoundNBT nbt) {
         type = AbilityType.readFromNBT(nbt);
         level = nbt.getInt("level");
-        maxCurrentLevel = nbt.getInt("maxLevel");
+        maxCurrentLevel = Math.max(1, nbt.getInt("maxLevel"));
     }
 
     @Override

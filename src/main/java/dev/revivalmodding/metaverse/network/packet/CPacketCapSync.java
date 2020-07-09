@@ -2,7 +2,6 @@ package dev.revivalmodding.metaverse.network.packet;
 
 import dev.revivalmodding.metaverse.MetaVerse;
 import dev.revivalmodding.metaverse.client.ClientEventHandler;
-import dev.revivalmodding.metaverse.common.capability.PlayerData;
 import dev.revivalmodding.metaverse.common.capability.PlayerDataFactory;
 import dev.revivalmodding.metaverse.network.Packet;
 import net.minecraft.client.Minecraft;
@@ -10,7 +9,8 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.PacketBuffer;
-import net.minecraft.server.MinecraftServer;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.fml.network.NetworkEvent;
 
 import java.util.UUID;
@@ -39,6 +39,7 @@ public class CPacketCapSync implements Packet<CPacketCapSync> {
         return new CPacketCapSync(buf.readUniqueId(), buf.readCompoundTag());
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
     public void handle(CPacketCapSync cPacketCapSync, Supplier<NetworkEvent.Context> ctx) {
         ctx.get().enqueueWork(() -> {

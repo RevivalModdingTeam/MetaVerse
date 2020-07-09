@@ -69,7 +69,7 @@ public class LightningProjectile extends Entity implements IEntityAdditionalSpaw
     public void tick() {
         updateDirection();
         Vec3d motion = getMotion();
-        setMotion(motion.x * DRAG, motion.y - 0.05, motion.z * DRAG);
+        setMotion(motion.x, motion.y - 0.05, motion.z);
         super.tick();
         Vec3d position = getPositionVec();
         BlockRayTraceResult traceResult = world.rayTraceBlocks(new RayTraceContext(position, position.add(motion), RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, this));

@@ -15,12 +15,13 @@ import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
-@Mod.EventBusSubscriber(modid = MetaVerse.MODID)
+@Mod.EventBusSubscriber(modid = MetaVerse.MODID, value = Dist.CLIENT)
 public class ClientEventHandler {
 
     @SubscribeEvent
@@ -63,7 +64,7 @@ public class ClientEventHandler {
         if(!empty) {
             boolean useable = ability.applyAbility();
             RenderUtils.renderTexture(startX + 2, startY + 2, startX + 18, startY + 18, ability.getType().getIcon());
-            if(ability instanceof LevelableAbility && ability.applyAbility()) {
+            if(ability instanceof LevelableAbility && ((LevelableAbility) ability).shouldDisplayCurrentLevel() && ability.applyAbility()) {
                 String string = ((LevelableAbility) ability).getCurrentLevel() + "";
                 renderer.drawStringWithShadow(string, startX + 20 - renderer.getStringWidth(string) / 2.0F, startY + 16, 0xFFFF00);
             }

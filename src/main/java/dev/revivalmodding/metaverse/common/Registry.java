@@ -90,7 +90,7 @@ public class Registry {
                             .price(10)
                             .icon("ability_lightning_throw")
                             .displayName("lightning_throw")
-                            .onToggled((ability, player) -> LightningProjectile.shoot(player.world, player, 5))
+                            .onToggled((ability, player) -> LightningProjectile.shoot(player.world, player, 3 + ability.getCurrentLevel()))
                             .build(),
                     new AbilityType.Builder<>(BasicAbility::new)
                             .name(MetaVerse.getResource("water_running"))

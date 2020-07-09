@@ -134,7 +134,7 @@ public class AbilityScreen extends Screen {
             int iTmp = 0;
             for(int i = 0; i < abilities.getActiveAbilities().length; i++) {
                 IAbility ability = abilities.getActiveAbilities()[i];
-                if(ability.getType().getRegistryName().equals(type.getRegistryName()) && ability instanceof UpgradeableAbility) {
+                if(ability instanceof UpgradeableAbility && ability.getType().getRegistryName().equals(type.getRegistryName())) {
                     tmp = (UpgradeableAbility) ability;
                     iTmp = i;
                     break;
@@ -157,8 +157,17 @@ public class AbilityScreen extends Screen {
             RenderUtils.renderColoredTexture(x, y, x + width, y + height, red, green, blue, alpha, TEXTURE);
             FontRenderer renderer = Minecraft.getInstance().fontRenderer;
             String level = upgradeableAbility.getMaxLevel() + "";
-            int textColor = 0xFFFFFF;
-            renderer.drawStringWithShadow(level, x + (20 - renderer.getStringWidth(level)) / 2.0F, y + 6, textColor);
+            if(upgradeableAbility.canUpgrade(Minecraft.getInstance().player)) {
+                long current = System.currentTimeMillis();
+                long l = current % 2000L;
+                boolean flag = l < 1000L;
+                float variableColor = flag ? 1.0F * (l / (float) 1000L) : 1.0F - 1.0F * ((l - 1000L) / (float) 1000L);
+                renderer.drawStringWithShadow(level, x + (20 - renderer.getStringWidth(level)) / 2.0F, y + 6, 0xFFFF00 | (int) (variableColor * 255));
+            } else if(upgradeableAbility.isMaxedOut()) {
+                renderer.drawStringWithShadow("MAX", x + (20 - renderer.getStringWidth("MAX")) / 2.0F, y + 6, 0xffffff);
+            } else {
+                renderer.drawString(level, x + (20 - renderer.getStringWidth(level)) / 2.0f, y + 6, 0x565656);
+            }
         }
 
         static void pressed(Button button) {
