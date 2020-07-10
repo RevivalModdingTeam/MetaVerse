@@ -10,9 +10,9 @@ import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
 import net.minecraft.nbt.StringNBT;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.common.util.Constants;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -29,6 +29,11 @@ public class Abilities {
 
     public Abilities(PlayerData data) {
         this.data = data;
+    }
+
+    @Nullable
+    public IAbility getActiveAbility(AbilityType<?> type) {
+        return Utils.getObject(type, activeAbilities, AbilityType::isSameType);
     }
 
     public void tick() {

@@ -56,7 +56,7 @@ public class SPacketAbilityAction implements Packet<SPacketAbilityAction> {
                     }
                     case ACTIVATE: {
                         int i = Utils.firstNull(abilities.getActiveAbilities());
-                        if(i >= 0 && !Utils.contains(type, abilities.getActiveAbilities(), (t, a) -> a != null && a.getType().getRegistryName().equals(t.getRegistryName()))) {
+                        if(i >= 0 && !Utils.contains(type, abilities.getActiveAbilities(), AbilityType::isSameType)) {
                             abilities.activate(type);
                         }
                         break;

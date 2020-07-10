@@ -31,7 +31,7 @@ public class Registry {
     public static final class AbilityTypes {
         public static final AbilityType<SpeedAbility> SPEED = null;
         public static final AbilityType<BasicAbility> WALL_RUNNING = null;
-        public static final AbilityType<BasicAbility> LIGHTNING_THROW = null;
+        public static final AbilityType<LightningThrowAbility> LIGHTNING_THROW = null;
         public static final AbilityType<BasicAbility> WATER_RUNNING = null;
     }
 
@@ -42,10 +42,6 @@ public class Registry {
 
     @ObjectHolder(MetaVerse.MODID)
     public static final class Items {
-    }
-
-    @ObjectHolder(MetaVerse.MODID)
-    public static final class Suit {
         public static final BipedSuit TEST = null;
     }
 
@@ -73,12 +69,7 @@ public class Registry {
 
         @SubscribeEvent
         public static void registerItems(RegistryEvent.Register<Item> event) {
-        }
-
-        @SubscribeEvent
-        public static void registerSuits(RegistryEvent.Register<Item> event) {
             registerBipedSuit(event, ArmorMaterial.TURTLE, "test");
-
         }
 
         public static final EquipmentSlotType[] ARMOR = {EquipmentSlotType.FEET, EquipmentSlotType.LEGS, EquipmentSlotType.CHEST, EquipmentSlotType.HEAD};

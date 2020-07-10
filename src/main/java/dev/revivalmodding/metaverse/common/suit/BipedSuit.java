@@ -11,21 +11,26 @@ import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.ItemStack;
 import net.minecraft.world.World;
+import net.minecraftforge.api.distmarker.Dist;
+import net.minecraftforge.api.distmarker.OnlyIn;
 
 public class BipedSuit extends BasicSuit {
+
     public BipedSuit(String texture, ArmorMaterial materialIn, EquipmentSlotType slot, Properties builder) {
         super(texture, materialIn, slot, builder);
     }
 
     @Override
     public void onArmorTick(ItemStack item, World world, PlayerEntity entity) {
-        PlayerDataFactory.getCapability(entity).ifPresent(s -> {
+        // to Chappie -> won't work
+        /*PlayerDataFactory.getCapability(entity).ifPresent(s -> {
             Registry.AbilityTypes.WALL_RUNNING.onUpdate(Registry.AbilityTypes.WALL_RUNNING.newInstance(), entity);
-        });
+        });*/
     }
 
+    @OnlyIn(Dist.CLIENT)
     @Override
-    public BipedModel getArmorModel(LivingEntity entityLiving, ItemStack stack, EquipmentSlotType armorSlot, BipedModel _default) {
+    public BipedModel<?> getArmorModel(LivingEntity entityLiving, ItemStack stack, EquipmentSlotType armorSlot, BipedModel _default) {
         if (stack != ItemStack.EMPTY) {
             if (stack.getItem() instanceof BasicSuit) {
                 SuitModel model = new SuitModel(0.1F, false);

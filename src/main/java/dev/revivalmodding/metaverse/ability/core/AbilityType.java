@@ -9,6 +9,7 @@ import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
+import javax.annotation.Nullable;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
@@ -86,6 +87,10 @@ public class AbilityType<T extends IAbility> extends ForgeRegistryEntry<AbilityT
     @Override
     public String toString() {
         return getRegistryName().toString();
+    }
+
+    public boolean isSameType(@Nullable IAbility ability) {
+        return ability != null && ability.getType().getRegistryName().equals(getRegistryName());
     }
 
     public static class Builder<T extends IAbility> {

@@ -3,6 +3,7 @@ package dev.revivalmodding.metaverse.util;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
 
+import javax.annotation.Nullable;
 import java.util.Collection;
 import java.util.function.BiPredicate;
 
@@ -36,6 +37,16 @@ public class Utils {
             }
         }
         return -1;
+    }
+
+    @Nullable
+    public static <T, U> U getObject(T lookingFor, U[] group, BiPredicate<T, U> comparator) {
+        for (U u : group) {
+            if(comparator.test(lookingFor, u)) {
+                return u;
+            }
+        }
+        return null;
     }
 
     public static <T, U> boolean contains(T object, U[] group, BiPredicate<T, U> comparator) {

@@ -15,7 +15,7 @@ import net.minecraft.util.math.MathHelper;
 public class SuitModel extends PlayerModel {
 
 	public boolean smallArms;
-	private static BipedModel cachedModel;
+	private static BipedModel<?> cachedModel;
 
 	public ModelRenderer bipedLeftArmwear;
 	public ModelRenderer bipedRightArmwear;
