@@ -4,15 +4,13 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.client.renderer.entity.model.PlayerModel;
-import net.minecraft.client.renderer.model.Model;
 import net.minecraft.client.renderer.model.ModelRenderer;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.item.ArmorStandEntity;
 import net.minecraft.entity.monster.ZombieEntity;
 import net.minecraft.util.math.MathHelper;
 
-public class SuitModel extends PlayerModel {
+public class SuitModel extends PlayerModel<LivingEntity> {
 
 	public boolean smallArms;
 	private static BipedModel<?> cachedModel;
