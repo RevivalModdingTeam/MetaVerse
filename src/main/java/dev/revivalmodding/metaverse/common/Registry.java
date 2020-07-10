@@ -6,9 +6,14 @@ import dev.revivalmodding.metaverse.ability.core.AbilityType;
 import dev.revivalmodding.metaverse.ability.BasicAbility;
 import dev.revivalmodding.metaverse.ability.SpeedAbility;
 import dev.revivalmodding.metaverse.common.entity.LightningProjectile;
+import dev.revivalmodding.metaverse.common.suit.BipedSuit;
 import net.minecraft.block.Block;
 import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
+import net.minecraft.inventory.EquipmentSlotType;
+import net.minecraft.item.ArmorMaterial;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
 import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.Vec3d;
@@ -35,6 +40,15 @@ public class Registry {
         public static final EntityType<?> LIGHTNING_PROJECTILE = null;
     }
 
+    @ObjectHolder(MetaVerse.MODID)
+    public static final class Items {
+    }
+
+    @ObjectHolder(MetaVerse.MODID)
+    public static final class Suit {
+        public static final BipedSuit TEST = null;
+    }
+
     @Mod.EventBusSubscriber(modid = MetaVerse.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class Handler {
 
@@ -55,6 +69,24 @@ public class Registry {
             event.getRegistry().registerAll(
                     EntityType.Builder.create(LightningProjectile::new, EntityClassification.MISC).setTrackingRange(128).setUpdateInterval(1).setShouldReceiveVelocityUpdates(true).size(0.2F, 0.2F).build("metaverse:lightning_projectile").setRegistryName(MetaVerse.getResource("lightning_projectile"))
             );
+        }
+
+        @SubscribeEvent
+        public static void registerItems(RegistryEvent.Register<Item> event) {
+        }
+
+        @SubscribeEvent
+        public static void registerSuits(RegistryEvent.Register<Item> event) {
+            registerBipedSuit(event, ArmorMaterial.TURTLE, "test");
+
+        }
+
+        public static final EquipmentSlotType[] ARMOR = {EquipmentSlotType.FEET, EquipmentSlotType.LEGS, EquipmentSlotType.CHEST, EquipmentSlotType.HEAD};
+
+        private static void registerBipedSuit(RegistryEvent.Register<Item> event, ArmorMaterial material, String name) {
+            for(EquipmentSlotType slot : ARMOR) {
+                event.getRegistry().register(new BipedSuit(name, material, slot, new Item.Properties().group(ItemGroup.COMBAT)).setRegistryName(name+"_"+slot.getName()));
+            }
         }
 
         @SubscribeEvent
