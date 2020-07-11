@@ -25,7 +25,10 @@ import net.minecraftforge.registries.*;
 public class Registry {
 
     // custom registries
+    /** Holds all Ability types */
     public static IForgeRegistry<AbilityType<?>> ABILITY_TYPES;
+
+    // object holders & deferred registries
 
     @ObjectHolder(MetaVerse.MODID)
     public static final class AbilityTypes {
@@ -45,6 +48,7 @@ public class Registry {
         public static final BipedSuit TEST = null;
     }
 
+    // Common mod registry handler
     @Mod.EventBusSubscriber(modid = MetaVerse.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class Handler {
 
@@ -107,6 +111,7 @@ public class Registry {
                                     player.fallDistance = 0;
                                 }
                             })
+                            .setIgnoreMetapowers()
                             .build(),
                     new AbilityType.Builder<>(LightningThrowAbility::new)
                             .name(MetaVerse.getResource("lightning_throw"))
@@ -114,6 +119,7 @@ public class Registry {
                             .icon("ability_lightning_throw")
                             .displayName("lightning_throw")
                             .onToggled((ability, player) -> LightningProjectile.shoot(player.world, player, 3 + ability.getCurrentLevel()))
+                            .setIgnoreMetapowers()
                             .build(),
                     new AbilityType.Builder<>(BasicAbility::new)
                             .name(MetaVerse.getResource("water_running"))
@@ -142,6 +148,7 @@ public class Registry {
                                     player.onGround = true;
                                 }
                             })
+                            .setIgnoreMetapowers()
                             .build()
             );
         }

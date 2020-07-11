@@ -2,8 +2,19 @@ package dev.revivalmodding.metaverse.metapower;
 
 import dev.revivalmodding.metaverse.ability.core.AbilityType;
 import dev.revivalmodding.metaverse.common.Registry;
+import dev.revivalmodding.metaverse.common.capability.PlayerData;
+import dev.revivalmodding.metaverse.common.capability.PlayerDataFactory;
+import dev.revivalmodding.metaverse.util.Utils;
 import dev.revivalmodding.metaverse.util.object.LazyLoad;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.nbt.CompoundNBT;
+import net.minecraft.nbt.ListNBT;
+import net.minecraft.nbt.StringNBT;
+import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.common.util.Constants;
+import net.minecraftforge.common.util.LazyOptional;
 
+import javax.annotation.Nullable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +24,7 @@ import java.util.function.Supplier;
 public class Metapower {
 
     // DEFAULT METAPOWERS
-    public static Metapower SPEEDSTER_POWERS = register(() -> {
+    public static Metapower SPEEDSTER_POWERS = register("speedster", () -> {
         List<AbilityType<?>> list = new ArrayList<>();
         list.add(Registry.AbilityTypes.SPEED);
         list.add(Registry.AbilityTypes.WATER_RUNNING);
@@ -27,14 +38,30 @@ public class Metapower {
     });
     private Supplier<List<AbilityType<?>>> toInit;
     private List<AbilityType<?>> containedAbilities;
+    private final String name;
 
-    public static Metapower register(Supplier<List<AbilityType<?>>> baseAbilities) {
-        Metapower metapower = new Metapower();
+    public static Metapower register(String name, Supplier<List<AbilityType<?>>> baseAbilities) {
+        Metapower metapower = new Metapower(name);
         metapower.toInit = baseAbilities;
         return metapower;
     }
 
-    private Metapower() {
+    private Metapower(String name) {
+        this.name = name;
+    }
+
+    @Nullable
+    public static Metapower getPlayersPower(PlayerEntity player) {
+        LazyOptional<PlayerData> lazyOptional = PlayerDataFactory.getCapability(player);
+        if(lazyOptional.isPresent()) {
+            PlayerData data = lazyOptional.orElse(null);
+            return data.getMetapower();
+        }
+        return null;
+    }
+
+    public boolean allows(AbilityType<?> type) {
+        return getContainedAbilities().contains(type);
     }
 
     /**
@@ -42,8 +69,35 @@ public class Metapower {
      * @return new instance with same properties as this instance
      */
     public Metapower copy() {
-        Metapower metapower = new Metapower();
+        Metapower metapower = new Metapower(name);
         metapower.containedAbilities = this.getContainedAbilities();
+        return metapower;
+    }
+
+    public CompoundNBT write() {
+        CompoundNBT nbt = new CompoundNBT();
+        nbt.putString("name", name);
+        ListNBT contained = new ListNBT();
+        List<AbilityType<?>> types = getContainedAbilities();
+        for(AbilityType<?> type : types) {
+            contained.add(StringNBT.valueOf(type.getRegistryName().toString()));
+        }
+        nbt.put("contained", contained);
+        return nbt;
+    }
+
+    public static Metapower read(CompoundNBT nbt) {
+        String origin = nbt.getString("name");
+        Metapower metapower = new Metapower(origin);
+        ListNBT contained = nbt.contains("contained") ? nbt.getList("contained", Constants.NBT.TAG_STRING) : new ListNBT();
+        for(int i = 0; i < contained.size(); i++) {
+            ResourceLocation resourceLocation = new ResourceLocation(contained.getString(i));
+            AbilityType<?> type = Registry.ABILITY_TYPES.getValue(resourceLocation);
+            if(type == null) {
+                continue;
+            }
+            metapower.containedAbilities.add(type);
+        }
         return metapower;
     }
 

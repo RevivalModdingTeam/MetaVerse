@@ -2,11 +2,13 @@ package dev.revivalmodding.metaverse.ability.core;
 
 import dev.revivalmodding.metaverse.MetaVerse;
 import dev.revivalmodding.metaverse.common.Registry;
+import dev.revivalmodding.metaverse.metapower.Metapower;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
+import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nullable;
@@ -14,19 +16,38 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Predicate;
 
+/**
+ * Defines ability behaviour like toggle actions, activation etc.
+ * Registered in {@link Registry.Handler#registerAbilityTypes(RegistryEvent.Register)}
+ * @param <T> - the {@link IAbility} implementation
+ *
+ * @author Toma
+ */
 @SuppressWarnings("unchecked")
 public class AbilityType<T extends IAbility> extends ForgeRegistryEntry<AbilityType<?>> {
 
+    /** Handles creating new {@link T} instances */
     private final IFactory<T> factory;
+    /** Called every tick from {@link net.minecraftforge.event.TickEvent.PlayerTickEvent} on both sides */
     private final BiConsumer<T, PlayerEntity> tickHandler;
+    /** Called every livingTick from {@link net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent}*/
     private final BiConsumer<T, PlayerEntity> livingTickHandler;
+    /** Called every time player presses keybind if all conditions are met. Called on SERVER side only */
     private final BiConsumer<T, PlayerEntity> onToggle;
+    /** Called once player deactivates/locks the ability using the screen/command. Useful for resetting movement speed for example */
     private final Consumer<PlayerEntity> onDeactivated;
+    /** Additional conditions for unlocking/activation */
     private final Predicate<PlayerEntity> canActivate;
+    /** The amount of levels removed once player unlocks this ability */
     private final int price;
+    /** Icon which will be shown in {@link dev.revivalmodding.metaverse.client.screen.AbilityScreen} */
     private final ResourceLocation iconTexture;
+    /** Usually {@link TranslationTextComponent} for displaying name on various locations, for example in {@link dev.revivalmodding.metaverse.client.screen.AbilityScreen} */
     private final ITextComponent displayName;
+    /** If this ability can be used even if player has no {@link Metapower} or the ability is not supported */
+    private final boolean ignoreMetapowers;
 
+    /** Obviously private constructor. Use the {@link Builder} to create new types */
     private AbilityType(Builder<T> builder) {
         this.factory = builder.factory;
         this.tickHandler = builder.tickHandler;
@@ -37,6 +58,7 @@ public class AbilityType<T extends IAbility> extends ForgeRegistryEntry<AbilityT
         this.price = builder.price;
         this.iconTexture = builder.iconTexture;
         this.displayName = builder.displayName;
+        this.ignoreMetapowers = builder.ignoreMetapower;
     }
 
     public void onUpdate(IAbility ability, PlayerEntity player) {
@@ -56,7 +78,7 @@ public class AbilityType<T extends IAbility> extends ForgeRegistryEntry<AbilityT
     }
 
     public boolean canActivate(PlayerEntity player) {
-        return canActivate.test(player);
+        return ignoreMetapowers || Metapower.getPlayersPower(player).allows(this) && canActivate.test(player);
     }
 
     public int getPrice() {
@@ -105,6 +127,7 @@ public class AbilityType<T extends IAbility> extends ForgeRegistryEntry<AbilityT
         private ResourceLocation iconTexture;
         private ITextComponent displayName;
         private int price;
+        private boolean ignoreMetapower;
 
         public Builder(IFactory<T> factory) {
             this.factory = factory;
@@ -162,6 +185,11 @@ public class AbilityType<T extends IAbility> extends ForgeRegistryEntry<AbilityT
 
         public Builder<T> displayName(String key) {
             this.displayName = new TranslationTextComponent("ability." + key);
+            return this;
+        }
+
+        public Builder<T> setIgnoreMetapowers() {
+            this.ignoreMetapower = true;
             return this;
         }
 

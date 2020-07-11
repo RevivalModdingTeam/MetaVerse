@@ -2,6 +2,7 @@ package dev.revivalmodding.metaverse.common.capability;
 
 import dev.revivalmodding.metaverse.MetaVerse;
 import dev.revivalmodding.metaverse.common.capability.object.Abilities;
+import dev.revivalmodding.metaverse.metapower.Metapower;
 import dev.revivalmodding.metaverse.network.NetworkManager;
 import dev.revivalmodding.metaverse.network.packet.CPacketCapSync;
 import net.minecraft.entity.Entity;
@@ -18,6 +19,7 @@ public class PlayerDataFactory implements PlayerData {
 
     private final PlayerEntity player;
     private final Abilities abilities;
+    private Metapower metapower;
 
     public static LazyOptional<PlayerData> getCapability(PlayerEntity player) {
         return player.getCapability(PlayerDataProvider.CAP);
@@ -30,6 +32,16 @@ public class PlayerDataFactory implements PlayerData {
     public PlayerDataFactory(PlayerEntity player) {
         this.player = player;
         this.abilities = new Abilities(this);
+    }
+
+    @Override
+    public void setMetapower(Metapower metapower) {
+        this.metapower = metapower;
+    }
+
+    @Override
+    public Metapower getMetapower() {
+        return metapower;
     }
 
     @Override
@@ -58,12 +70,14 @@ public class PlayerDataFactory implements PlayerData {
     public CompoundNBT serializeNBT() {
         CompoundNBT nbt = new CompoundNBT();
         nbt.put("abilities", abilities.write());
+        if(metapower != null) nbt.put("metapower", metapower.write());
         return nbt;
     }
 
     @Override
     public void deserializeNBT(CompoundNBT nbt) {
         abilities.read(nbt.contains("abilities") ? nbt.getCompound("abilities") : new CompoundNBT());
+        if(nbt.contains("metapower")) metapower = Metapower.read(nbt.getCompound("metapower"));
     }
 
     @Override

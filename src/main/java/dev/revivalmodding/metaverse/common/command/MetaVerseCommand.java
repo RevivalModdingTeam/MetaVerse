@@ -26,6 +26,9 @@ import net.minecraftforge.registries.IForgeRegistryEntry;
 
 import java.util.stream.Stream;
 
+/**
+ * Command for modifying various player data like abilities, level etc.
+ */
 public class MetaVerseCommand {
 
     static final DynamicCommandExceptionType INVALID_ABILITY = new DynamicCommandExceptionType(obj -> new StringTextComponent("Unknown ability type: " + obj));
