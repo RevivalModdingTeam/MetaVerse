@@ -78,7 +78,8 @@ public class AbilityType<T extends IAbility> extends ForgeRegistryEntry<AbilityT
     }
 
     public boolean canActivate(PlayerEntity player) {
-        return ignoreMetapowers || Metapower.getPlayersPower(player).allows(this) && canActivate.test(player);
+        return ignoreMetapowers ||
+                Metapower.getPlayersPower(player) != null && Metapower.getPlayersPower(player).allows(this) && canActivate.test(player);
     }
 
     public int getPrice() {
