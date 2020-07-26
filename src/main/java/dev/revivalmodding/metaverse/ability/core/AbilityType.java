@@ -12,31 +12,18 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nullable;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 /**
  * Defines ability behaviour like toggle actions, activation etc.
  * Registered in {@link Registry.Handler#registerAbilityTypes(RegistryEvent.Register)}
  * @param <T> - the {@link IAbility} implementation
- *
- * TODO improve this code
  * @author Toma
  */
-@SuppressWarnings("unchecked")
 public class AbilityType<T extends IAbility> extends ForgeRegistryEntry<AbilityType<?>> {
 
     /** Handles creating new {@link T} instances */
     private final IFactory<T> factory;
-    /** Called every tick from {@link net.minecraftforge.event.TickEvent.PlayerTickEvent} on both sides */
-    private final BiConsumer<T, PlayerEntity> tickHandler;
-    /** Called every livingTick from {@link net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent}*/
-    private final BiConsumer<T, PlayerEntity> livingTickHandler;
-    /** Called every time player presses keybind if all conditions are met. Called on SERVER side only */
-    private final BiConsumer<T, PlayerEntity> onToggle;
-    /** Called once player deactivates/locks the ability using the screen/command. Useful for resetting movement speed for example */
-    private final Consumer<PlayerEntity> onDeactivated;
     /** Additional conditions for unlocking/activation */
     private final Predicate<PlayerEntity> canActivate;
     /** The amount of levels removed once player unlocks this ability */
@@ -51,31 +38,11 @@ public class AbilityType<T extends IAbility> extends ForgeRegistryEntry<AbilityT
     /** Obviously private constructor. Use the {@link Builder} to create new types */
     private AbilityType(Builder<T> builder) {
         this.factory = builder.factory;
-        this.tickHandler = builder.tickHandler;
-        this.livingTickHandler = builder.livingUpdateHandler;
-        this.onToggle = builder.onToglePress;
-        this.onDeactivated = builder.onDeactivated;
         this.canActivate = builder.canActivate;
         this.price = builder.price;
         this.iconTexture = builder.iconTexture;
         this.displayName = builder.displayName;
         this.ignoreMetapowers = builder.ignoreMetapower;
-    }
-
-    public void onUpdate(IAbility ability, PlayerEntity player) {
-        this.tickHandler.accept((T) ability, player);
-    }
-
-    public void onLivingUpdate(IAbility ability, PlayerEntity player) {
-        this.livingTickHandler.accept((T) ability, player);
-    }
-
-    public void onToggled(IAbility ability, PlayerEntity player) {
-        this.onToggle.accept((T) ability, player);
-    }
-
-    public void handleDeactivated(PlayerEntity player) {
-        this.onDeactivated.accept(player);
     }
 
     public boolean canActivate(PlayerEntity player) {
@@ -120,11 +87,7 @@ public class AbilityType<T extends IAbility> extends ForgeRegistryEntry<AbilityT
 
         private final IFactory<T> factory;
         private ResourceLocation registryName;
-        private BiConsumer<T, PlayerEntity> tickHandler = (ability, player) -> {};
-        private BiConsumer<T, PlayerEntity> livingUpdateHandler = (ability, player) -> {};
         private Predicate<PlayerEntity> canActivate = player -> true;
-        private BiConsumer<T, PlayerEntity> onToglePress = (ability, player) -> {};
-        private Consumer<PlayerEntity> onDeactivated = player -> {};
         private ResourceLocation iconTexture;
         private ITextComponent displayName;
         private int price;
@@ -139,16 +102,6 @@ public class AbilityType<T extends IAbility> extends ForgeRegistryEntry<AbilityT
             return this;
         }
 
-        public Builder<T> onUpdate(BiConsumer<T, PlayerEntity> onUpdate) {
-            this.tickHandler = onUpdate;
-            return this;
-        }
-
-        public Builder<T> onLivingUpdate(BiConsumer<T, PlayerEntity> livingUpdateHandler) {
-            this.livingUpdateHandler = livingUpdateHandler;
-            return this;
-        }
-
         public Builder<T> price(int price) {
             this.price = price;
             return this;
@@ -156,16 +109,6 @@ public class AbilityType<T extends IAbility> extends ForgeRegistryEntry<AbilityT
 
         public Builder<T> canActivate(Predicate<PlayerEntity> predicate) {
             this.canActivate = predicate;
-            return this;
-        }
-
-        public Builder<T> deactivate(Consumer<PlayerEntity> onDeactivated) {
-            this.onDeactivated = onDeactivated;
-            return this;
-        }
-
-        public Builder<T> onToggled(BiConsumer<T, PlayerEntity> onToglePress) {
-            this.onToglePress = onToglePress;
             return this;
         }
 

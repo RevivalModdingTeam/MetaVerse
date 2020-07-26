@@ -70,17 +70,17 @@ public abstract class AbstractUpgradeableAbility implements IAbility, Upgradeabl
 
     @Override
     public void handleTick(PlayerEntity player) {
-        getType().onUpdate(this, player);
+
     }
 
     @Override
     public void handleLivingUpdate(PlayerEntity player) {
-        getType().onLivingUpdate(this, player);
+
     }
 
     @Override
     public void handleDeactivated(PlayerEntity player) {
-        getType().handleDeactivated(player);
+
     }
 
     @Override

@@ -1,9 +1,7 @@
 package dev.revivalmodding.metaverse.common;
 
 import dev.revivalmodding.metaverse.MetaVerse;
-import dev.revivalmodding.metaverse.ability.BasicAbility;
-import dev.revivalmodding.metaverse.ability.LightningThrowAbility;
-import dev.revivalmodding.metaverse.ability.SpeedAbility;
+import dev.revivalmodding.metaverse.ability.*;
 import dev.revivalmodding.metaverse.ability.core.AbilityType;
 import dev.revivalmodding.metaverse.common.blocks.SmallParticleAcceleratorBlock;
 import dev.revivalmodding.metaverse.common.blocks.SuitMakerBlock;
@@ -18,9 +16,7 @@ import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
-import net.minecraft.tags.FluidTags;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -116,25 +112,12 @@ public class Registry {
                             .price(3)
                             .icon("ability_speed")
                             .displayName("speed")
-                            .onUpdate((ability, player) -> {
-                                int level = ability.getCurrentLevel();
-                                float value = 0.1F + 0.05F * level;
-                                player.abilities.setWalkSpeed(value);
-                            })
-                            .deactivate(player -> player.abilities.setWalkSpeed(0.1F))
                             .build(),
-                    new AbilityType.Builder<>(BasicAbility::new)
+                    new AbilityType.Builder<>(WallRunningAbility::new)
                             .name(MetaVerse.getResource("wall_running"))
                             .price(0)
                             .icon("ability_wallrunning")
                             .displayName("wall_running")
-                            .onUpdate((ability, player) -> {
-                                if(player.collidedHorizontally) {
-                                    Vec3d motion = player.getMotion();
-                                    player.setMotion(motion.x, player.getAIMoveSpeed(), motion.z);
-                                    player.fallDistance = 0;
-                                }
-                            })
                             .setIgnoreMetapowers()
                             .build(),
                     new AbilityType.Builder<>(LightningThrowAbility::new)
@@ -142,36 +125,19 @@ public class Registry {
                             .price(10)
                             .icon("ability_lightning_throw")
                             .displayName("lightning_throw")
-                            .onToggled((ability, player) -> LightningProjectile.shoot(player.world, player, 3 + ability.getCurrentLevel()))
                             .setIgnoreMetapowers()
                             .build(),
-                    new AbilityType.Builder<>(BasicAbility::new)
+                    new AbilityType.Builder<>(WaterRunningAbility::new)
                             .name(MetaVerse.getResource("water_running"))
                             .price(1)
                             .icon("ability_water_running")
                             .displayName("water_running")
-                            .onUpdate((ability, player) -> {
-                                if(player.isSprinting() && !player.isInWater() && player.world.getFluidState(player.getPosition().add(0, -0.1, 0)).isTagged(FluidTags.WATER)) {
-                                    Vec3d vec3d = player.getMotion();
-                                    player.setMotion(vec3d.x, 0, vec3d.z);
-                                    player.fallDistance = 0.0F;
-                                    player.onGround = true;
-                                }
-                            })
                             .build(),
-                    new AbilityType.Builder<>(BasicAbility::new)
+                    new AbilityType.Builder<>(PhasingAbility::new)
                             .name(MetaVerse.getResource("phasing"))
                             .price(6)
                             .icon("ability_phasing")
                             .displayName("phasing")
-                            .onLivingUpdate((ability, player) -> {
-                                if(player.world.getBlockState(player.getPosition().add(0, -0.1, 0)).getMaterial().isSolid()) {
-                                    player.noClip = true;
-                                    Vec3d vec3d = player.getMotion();
-                                    player.setMotion(vec3d.x, 0, vec3d.z);
-                                    player.onGround = true;
-                                }
-                            })
                             .setIgnoreMetapowers()
                             .build()
             );

@@ -3,6 +3,8 @@ package dev.revivalmodding.metaverse.ability;
 import dev.revivalmodding.metaverse.ability.core.AbilityType;
 import dev.revivalmodding.metaverse.ability.core.AbstractCooldownAbility;
 import dev.revivalmodding.metaverse.ability.interfaces.UpgradeableAbility;
+import dev.revivalmodding.metaverse.common.entity.LightningProjectile;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 
 public class LightningThrowAbility extends AbstractCooldownAbility implements UpgradeableAbility {
@@ -17,6 +19,11 @@ public class LightningThrowAbility extends AbstractCooldownAbility implements Up
     public int getMaxCooldown() {
         int i = level - 1;
         return 200 - 10 * i;
+    }
+
+    @Override
+    public void onUse(PlayerEntity player) {
+        LightningProjectile.shoot(player.world, player, 3 + level);
     }
 
     @Override

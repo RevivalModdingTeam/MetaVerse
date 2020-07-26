@@ -37,17 +37,17 @@ public abstract class AbstractLevelableAbility implements IAbility, LevelableAbi
 
     @Override
     public void handleTick(PlayerEntity player) {
-        getType().onUpdate(this, player);
+
     }
 
     @Override
     public void handleLivingUpdate(PlayerEntity player) {
-        getType().onLivingUpdate(this, player);
+
     }
 
     @Override
     public void handleDeactivated(PlayerEntity player) {
-        getType().handleDeactivated(player);
+
     }
 
     @Override

@@ -21,23 +21,22 @@ public class BasicAbility implements IAbility {
 
     @Override
     public void handleTick(PlayerEntity player) {
-        getType().onUpdate(this, player);
+
     }
 
     @Override
     public void handleLivingUpdate(PlayerEntity player) {
-        getType().onLivingUpdate(this, player);
+
     }
 
     @Override
     public void handleToggled(PlayerEntity player) {
         active = !active;
-        getType().onToggled(this, player);
     }
 
     @Override
     public void handleDeactivated(PlayerEntity player) {
-        getType().handleDeactivated(player);
+
     }
 
     @Override

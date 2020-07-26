@@ -5,7 +5,6 @@ import dev.revivalmodding.metaverse.ability.core.AbilityType;
 import dev.revivalmodding.metaverse.ability.core.IAbility;
 import dev.revivalmodding.metaverse.common.Registry;
 import dev.revivalmodding.metaverse.common.capability.PlayerData;
-import dev.revivalmodding.metaverse.metapower.Metapower;
 import dev.revivalmodding.metaverse.util.Utils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -89,7 +88,7 @@ public class Abilities {
             if(ability == null) continue;
             if(ability.getType().getRegistryName().equals(type.getRegistryName())) {
                 activeAbilities[i] = null;
-                ability.getType().handleDeactivated(data.getOwner());
+                ability.handleDeactivated(data.getOwner());
                 data.sync();
                 cache(ability);
                 break;

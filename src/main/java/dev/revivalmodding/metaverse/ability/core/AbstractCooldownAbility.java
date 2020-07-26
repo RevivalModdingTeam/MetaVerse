@@ -15,6 +15,8 @@ public abstract class AbstractCooldownAbility implements IAbility, CooldownAbili
 
     public abstract int getMaxCooldown();
 
+    public abstract void onUse(PlayerEntity player);
+
     @Override
     public void handleTick(PlayerEntity player) {
         if(cooldownTicks > 0) {
@@ -24,7 +26,7 @@ public abstract class AbstractCooldownAbility implements IAbility, CooldownAbili
 
     @Override
     public void handleLivingUpdate(PlayerEntity player) {
-        getType().onLivingUpdate(this, player);
+
     }
 
     @Override
@@ -43,16 +45,16 @@ public abstract class AbstractCooldownAbility implements IAbility, CooldownAbili
     }
 
     @Override
-    public void handleToggled(PlayerEntity player) {
+    public final void handleToggled(PlayerEntity player) {
         if(!isOnCooldown()) {
-            getType().onToggled(this, player);
             this.cooldownTicks = getMaxCooldown();
+            onUse(player);
         }
     }
 
     @Override
     public void handleDeactivated(PlayerEntity player) {
-        getType().handleDeactivated(player);
+
     }
 
     @Override
