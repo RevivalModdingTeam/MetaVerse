@@ -1,10 +1,13 @@
 package dev.revivalmodding.metaverse.common;
 
 import dev.revivalmodding.metaverse.MetaVerse;
-import dev.revivalmodding.metaverse.ability.LightningThrowAbility;
-import dev.revivalmodding.metaverse.ability.core.AbilityType;
 import dev.revivalmodding.metaverse.ability.BasicAbility;
+import dev.revivalmodding.metaverse.ability.LightningThrowAbility;
 import dev.revivalmodding.metaverse.ability.SpeedAbility;
+import dev.revivalmodding.metaverse.ability.core.AbilityType;
+import dev.revivalmodding.metaverse.common.blocks.SmallParticleAcceleratorBlock;
+import dev.revivalmodding.metaverse.common.blocks.SuitMakerBlock;
+import dev.revivalmodding.metaverse.common.blocks.TrailEditorBlock;
 import dev.revivalmodding.metaverse.common.entity.LightningProjectile;
 import dev.revivalmodding.metaverse.common.suit.BipedSuit;
 import net.minecraft.block.Block;
@@ -12,6 +15,7 @@ import net.minecraft.entity.EntityClassification;
 import net.minecraft.entity.EntityType;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorMaterial;
+import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.tags.FluidTags;
@@ -21,6 +25,9 @@ import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.*;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class Registry {
 
@@ -36,6 +43,7 @@ public class Registry {
         public static final AbilityType<BasicAbility> WALL_RUNNING = null;
         public static final AbilityType<LightningThrowAbility> LIGHTNING_THROW = null;
         public static final AbilityType<BasicAbility> WATER_RUNNING = null;
+        public static final AbilityType<BasicAbility> PHASING = null;
     }
 
     @ObjectHolder(MetaVerse.MODID)
@@ -44,13 +52,22 @@ public class Registry {
     }
 
     @ObjectHolder(MetaVerse.MODID)
-    public static final class Items {
+    public static final class MVItems {
         public static final BipedSuit TEST = null;
+    }
+
+    @ObjectHolder(MetaVerse.MODID)
+    public static final class MVBlocks {
+        public static final SuitMakerBlock SUIT_MAKER = null;
+        public static final SmallParticleAcceleratorBlock SMALL_PARTICLE_ACCELERATOR = null;
+        public static final TrailEditorBlock TRAIL_EDITOR = null;
     }
 
     // Common mod registry handler
     @Mod.EventBusSubscriber(modid = MetaVerse.MODID, bus = Mod.EventBusSubscriber.Bus.MOD)
     public static class Handler {
+
+        public static List<BlockItem> blockItemsToRegister = new ArrayList<>();
 
         @SuppressWarnings("unchecked")
         @SubscribeEvent
@@ -61,7 +78,11 @@ public class Registry {
 
         @SubscribeEvent
         public static void registerBlocks(RegistryEvent.Register<Block> event) {
-
+            event.getRegistry().registerAll(
+                    new SuitMakerBlock("suit_maker"),
+                    new SmallParticleAcceleratorBlock("small_particle_accelerator"),
+                    new TrailEditorBlock("trail_editor")
+            );
         }
 
         @SubscribeEvent
@@ -73,7 +94,10 @@ public class Registry {
 
         @SubscribeEvent
         public static void registerItems(RegistryEvent.Register<Item> event) {
+            IForgeRegistry<Item> registry = event.getRegistry();
             registerBipedSuit(event, ArmorMaterial.TURTLE, "test");
+            blockItemsToRegister.forEach(registry::register);
+            blockItemsToRegister = null;
         }
 
         public static final EquipmentSlotType[] ARMOR = {EquipmentSlotType.FEET, EquipmentSlotType.LEGS, EquipmentSlotType.CHEST, EquipmentSlotType.HEAD};

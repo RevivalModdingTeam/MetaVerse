@@ -1,6 +1,9 @@
 package dev.revivalmodding.metaverse.util;
 
+import net.minecraft.block.Block;
 import net.minecraft.entity.Entity;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.util.math.Vec3d;
 
 import javax.annotation.Nullable;
@@ -65,5 +68,15 @@ public class Utils {
             }
         }
         return false;
+    }
+
+    public static BlockItem createBlockItemFor(Block block) {
+        return createBlockItemFor(block, new Item.Properties().group(MVTabs.MV));
+    }
+
+    public static BlockItem createBlockItemFor(Block block, Item.Properties properties) {
+        BlockItem blockItem = new BlockItem(block, properties);
+        blockItem.setRegistryName(block.getRegistryName());
+        return blockItem;
     }
 }
