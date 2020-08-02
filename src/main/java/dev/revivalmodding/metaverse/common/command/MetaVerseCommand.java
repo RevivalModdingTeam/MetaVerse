@@ -8,10 +8,10 @@ import com.mojang.brigadier.exceptions.DynamicCommandExceptionType;
 import com.mojang.brigadier.exceptions.SimpleCommandExceptionType;
 import com.mojang.brigadier.suggestion.SuggestionProvider;
 import dev.revivalmodding.metaverse.ability.core.AbilityType;
-import dev.revivalmodding.metaverse.common.Registry;
 import dev.revivalmodding.metaverse.common.capability.PlayerData;
 import dev.revivalmodding.metaverse.common.capability.PlayerDataFactory;
 import dev.revivalmodding.metaverse.common.capability.object.Abilities;
+import dev.revivalmodding.metaverse.init.MVRegistries;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
 import net.minecraft.command.ISuggestionProvider;
@@ -36,7 +36,7 @@ public class MetaVerseCommand {
     static final SimpleCommandExceptionType ALREADY_LOCKED = new SimpleCommandExceptionType(new StringTextComponent("This ability is already locked"));
     static final DynamicCommandExceptionType INVALID_SENDER = new DynamicCommandExceptionType(obj -> new StringTextComponent("Invalid command sender - " + obj.getClass().getName()));
     static final DynamicCommandExceptionType NO_DATA = new DynamicCommandExceptionType(obj -> new StringTextComponent("Couldn't get data for " + ((PlayerEntity) obj).getName()));
-    static final SuggestionProvider<CommandSource> SUGGESTIONS_ALL = (ctx, builder) -> ISuggestionProvider.func_212476_a(Registry.ABILITY_TYPES.getValues().stream().map(IForgeRegistryEntry::getRegistryName), builder);
+    static final SuggestionProvider<CommandSource> SUGGESTIONS_ALL = (ctx, builder) -> ISuggestionProvider.func_212476_a(MVRegistries.ABILITIES.getValues().stream().map(IForgeRegistryEntry::getRegistryName), builder);
     static final SuggestionProvider<CommandSource> SUGGESTIONS_ACTIVE = (ctx, builder) -> {
         Entity entity = ctx.getSource().getEntity();
         if(entity instanceof PlayerEntity) {
@@ -68,7 +68,7 @@ public class MetaVerseCommand {
     }
 
     private static int manageAbility(CommandContext<CommandSource> ctx, ResourceLocation ability, boolean lock) throws CommandSyntaxException {
-        AbilityType<?> type = Registry.ABILITY_TYPES.getValue(ability);
+        AbilityType<?> type = MVRegistries.ABILITIES.getValue(ability);
         if(type == null) {
             throw INVALID_ABILITY.create(ability);
         }

@@ -1,7 +1,7 @@
 package dev.revivalmodding.metaverse.common.blocks;
 
 import dev.revivalmodding.metaverse.MetaVerse;
-import dev.revivalmodding.metaverse.common.Registry;
+import dev.revivalmodding.metaverse.init.Registry;
 import dev.revivalmodding.metaverse.util.Utils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
@@ -18,7 +18,7 @@ public class SmallParticleAcceleratorBlock extends Block {
     public SmallParticleAcceleratorBlock(String name) {
         super(Properties.create(Material.IRON));
         setRegistryName(MetaVerse.getResource(name));
-        Registry.Handler.blockItemsToRegister.add(Utils.createBlockItemFor(this));
+        Registry.blockItemsToRegister.add(Utils.createBlockItemFor(this));
     }
 
     @Override

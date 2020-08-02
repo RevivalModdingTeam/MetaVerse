@@ -1,9 +1,9 @@
 package dev.revivalmodding.metaverse.network.packet;
 
 import dev.revivalmodding.metaverse.ability.core.AbilityType;
-import dev.revivalmodding.metaverse.common.Registry;
 import dev.revivalmodding.metaverse.common.capability.PlayerDataFactory;
 import dev.revivalmodding.metaverse.common.capability.object.Abilities;
+import dev.revivalmodding.metaverse.init.MVRegistries;
 import dev.revivalmodding.metaverse.network.Packet;
 import dev.revivalmodding.metaverse.util.Utils;
 import net.minecraft.entity.player.ServerPlayerEntity;
@@ -34,7 +34,7 @@ public class SPacketAbilityAction implements Packet<SPacketAbilityAction> {
 
     @Override
     public SPacketAbilityAction decode(PacketBuffer buf) {
-        return new SPacketAbilityAction(buf.readEnumValue(ActionType.class), Registry.ABILITY_TYPES.getValue(buf.readResourceLocation()));
+        return new SPacketAbilityAction(buf.readEnumValue(ActionType.class), MVRegistries.ABILITIES.getValue(buf.readResourceLocation()));
     }
 
     @Override

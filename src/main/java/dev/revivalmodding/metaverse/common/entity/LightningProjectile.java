@@ -1,6 +1,6 @@
 package dev.revivalmodding.metaverse.common.entity;
 
-import dev.revivalmodding.metaverse.common.Registry;
+import dev.revivalmodding.metaverse.init.MVEntities;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.MoverType;
@@ -8,42 +8,28 @@ import net.minecraft.entity.effect.LightningBoltEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.network.IPacket;
-import net.minecraft.network.PacketBuffer;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.particles.ParticleTypes;
 import net.minecraft.util.math.*;
 import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
-import net.minecraftforge.fml.common.registry.IEntityAdditionalSpawnData;
 import net.minecraftforge.fml.network.NetworkHooks;
 
-public class LightningProjectile extends Entity implements IEntityAdditionalSpawnData {
+public class LightningProjectile extends Entity {
 
     private static final double DRAG = 0.95;
-    private int power;
+
+    public LightningProjectile(World world) {
+        this(MVEntities.LIGHTNING_PROJECTILE.get(), world);
+    }
 
     public LightningProjectile(EntityType<?> type, World world) {
         super(type, world);
         noClip = true;
     }
 
-    public LightningProjectile(EntityType<?> type, World world, int power) {
-        this(type, world);
-        this.power = power;
-    }
-
-    @Override
-    public void writeSpawnData(PacketBuffer buffer) {
-        buffer.writeInt(power);
-    }
-
-    @Override
-    public void readSpawnData(PacketBuffer additionalData) {
-        power = additionalData.readInt();
-    }
-
     public static void shoot(World world, PlayerEntity source, int power) {
-        LightningProjectile projectile = new LightningProjectile(Registry.EntityTypes.LIGHTNING_PROJECTILE, world);
+        LightningProjectile projectile = new LightningProjectile(world);
         Vec3d vec3d = projectile.getVectorForRotation(source.rotationPitch, source.rotationYaw);
         projectile.setPosition(source.getPosX(), source.getPosY() + source.getEyeHeight(), source.getPosZ());
         projectile.setMotion(power * vec3d.x, power * vec3d.y, power * vec3d.z);
@@ -113,11 +99,9 @@ public class LightningProjectile extends Entity implements IEntityAdditionalSpaw
 
     @Override
     protected void writeAdditional(CompoundNBT compound) {
-        compound.putInt("power", power);
     }
 
     @Override
     protected void readAdditional(CompoundNBT compound) {
-        power = compound.getInt("power");
     }
 }

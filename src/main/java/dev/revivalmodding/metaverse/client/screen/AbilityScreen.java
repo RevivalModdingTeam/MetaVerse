@@ -4,9 +4,9 @@ import dev.revivalmodding.metaverse.MetaVerse;
 import dev.revivalmodding.metaverse.ability.core.AbilityType;
 import dev.revivalmodding.metaverse.ability.core.IAbility;
 import dev.revivalmodding.metaverse.ability.interfaces.UpgradeableAbility;
-import dev.revivalmodding.metaverse.common.Registry;
 import dev.revivalmodding.metaverse.common.capability.PlayerDataFactory;
 import dev.revivalmodding.metaverse.common.capability.object.Abilities;
+import dev.revivalmodding.metaverse.init.MVRegistries;
 import dev.revivalmodding.metaverse.network.NetworkManager;
 import dev.revivalmodding.metaverse.network.packet.SPacketAbilityAction;
 import dev.revivalmodding.metaverse.network.packet.SPacketUpgradeAbility;
@@ -35,7 +35,7 @@ public class AbilityScreen extends Screen {
     private final int xSize = 200;
     private final int ySize = 180;
     private int scrollOffset;
-    private final List<AbilityType<?>> allTypes = new ArrayList<>(Registry.ABILITY_TYPES.getValues());
+    private final List<AbilityType<?>> allTypes = new ArrayList<>(MVRegistries.ABILITIES.getValues());
 
     public AbilityScreen() {
         super(new StringTextComponent("Ability screen"));

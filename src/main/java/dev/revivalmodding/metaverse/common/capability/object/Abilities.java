@@ -3,8 +3,8 @@ package dev.revivalmodding.metaverse.common.capability.object;
 import dev.revivalmodding.metaverse.MetaVerse;
 import dev.revivalmodding.metaverse.ability.core.AbilityType;
 import dev.revivalmodding.metaverse.ability.core.IAbility;
-import dev.revivalmodding.metaverse.common.Registry;
 import dev.revivalmodding.metaverse.common.capability.PlayerData;
+import dev.revivalmodding.metaverse.init.MVRegistries;
 import dev.revivalmodding.metaverse.util.Utils;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.nbt.ListNBT;
@@ -188,7 +188,7 @@ public class Abilities {
             CompoundNBT cacheNBT = nbt.getCompound("cache");
             for(String string : cacheNBT.keySet()) {
                 ResourceLocation key = new ResourceLocation(string);
-                if(Registry.ABILITY_TYPES.containsKey(key)) {
+                if(MVRegistries.ABILITIES.containsKey(key)) {
                     cache.put(key, cacheNBT.getCompound(string));
                 }
             }
@@ -211,7 +211,7 @@ public class Abilities {
         ListNBT available = nbt.contains("available") ? nbt.getList("available", Constants.NBT.TAG_STRING) : new ListNBT();
         for(int i = 0; i < available.size(); i++) {
             ResourceLocation location = new ResourceLocation(available.getString(i));
-            AbilityType<?> type = Registry.ABILITY_TYPES.getValue(location);
+            AbilityType<?> type = MVRegistries.ABILITIES.getValue(location);
             if(type == null) continue;
             availableTypes.add(type);
         }

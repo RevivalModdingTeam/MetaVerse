@@ -1,10 +1,10 @@
 package dev.revivalmodding.metaverse.metapower;
 
 import dev.revivalmodding.metaverse.ability.core.AbilityType;
-import dev.revivalmodding.metaverse.common.Registry;
 import dev.revivalmodding.metaverse.common.capability.PlayerData;
 import dev.revivalmodding.metaverse.common.capability.PlayerDataFactory;
-import dev.revivalmodding.metaverse.util.Utils;
+import dev.revivalmodding.metaverse.init.MVAbilities;
+import dev.revivalmodding.metaverse.init.MVRegistries;
 import dev.revivalmodding.metaverse.util.object.LazyLoad;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
@@ -26,8 +26,8 @@ public class Metapower {
     // DEFAULT METAPOWERS
     public static Metapower SPEEDSTER_POWERS = register("speedster", () -> {
         List<AbilityType<?>> list = new ArrayList<>();
-        list.add(Registry.AbilityTypes.SPEED);
-        list.add(Registry.AbilityTypes.WATER_RUNNING);
+        list.add(MVAbilities.SPEED);
+        list.add(MVAbilities.WATER_RUNNING);
         return list;
     });
 
@@ -92,7 +92,7 @@ public class Metapower {
         ListNBT contained = nbt.contains("contained") ? nbt.getList("contained", Constants.NBT.TAG_STRING) : new ListNBT();
         for(int i = 0; i < contained.size(); i++) {
             ResourceLocation resourceLocation = new ResourceLocation(contained.getString(i));
-            AbilityType<?> type = Registry.ABILITY_TYPES.getValue(resourceLocation);
+            AbilityType<?> type = MVRegistries.ABILITIES.getValue(resourceLocation);
             if(type == null) {
                 continue;
             }

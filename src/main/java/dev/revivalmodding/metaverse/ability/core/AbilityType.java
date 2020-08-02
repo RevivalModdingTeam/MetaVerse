@@ -1,14 +1,13 @@
 package dev.revivalmodding.metaverse.ability.core;
 
 import dev.revivalmodding.metaverse.MetaVerse;
-import dev.revivalmodding.metaverse.common.Registry;
+import dev.revivalmodding.metaverse.init.MVRegistries;
 import dev.revivalmodding.metaverse.metapower.Metapower;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.CompoundNBT;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.TranslationTextComponent;
-import net.minecraftforge.event.RegistryEvent;
 import net.minecraftforge.registries.ForgeRegistryEntry;
 
 import javax.annotation.Nullable;
@@ -16,7 +15,6 @@ import java.util.function.Predicate;
 
 /**
  * Defines ability behaviour like toggle actions, activation etc.
- * Registered in {@link Registry.Handler#registerAbilityTypes(RegistryEvent.Register)}
  * @param <T> - the {@link IAbility} implementation
  * @author Toma
  */
@@ -71,7 +69,7 @@ public class AbilityType<T extends IAbility> extends ForgeRegistryEntry<AbilityT
 
     public static AbilityType<?> readFromNBT(CompoundNBT nbt) {
         ResourceLocation location = new ResourceLocation(nbt.getString("type"));
-        return Registry.ABILITY_TYPES.getValue(location);
+        return MVRegistries.ABILITIES.getValue(location);
     }
 
     @Override
@@ -95,11 +93,6 @@ public class AbilityType<T extends IAbility> extends ForgeRegistryEntry<AbilityT
 
         public Builder(IFactory<T> factory) {
             this.factory = factory;
-        }
-
-        public Builder<T> name(ResourceLocation location) {
-            this.registryName = location;
-            return this;
         }
 
         public Builder<T> price(int price) {
@@ -137,9 +130,8 @@ public class AbilityType<T extends IAbility> extends ForgeRegistryEntry<AbilityT
             return this;
         }
 
-        @SuppressWarnings("unchecked")
         public AbilityType<T> build() {
-            return (AbilityType<T>) new AbilityType<>(this).setRegistryName(this.registryName);
+            return new AbilityType<>(this);
         }
     }
 
