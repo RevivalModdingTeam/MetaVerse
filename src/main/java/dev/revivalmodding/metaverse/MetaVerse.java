@@ -2,6 +2,7 @@ package dev.revivalmodding.metaverse;
 
 import com.mojang.brigadier.CommandDispatcher;
 import dev.revivalmodding.metaverse.client.Keybinds;
+import dev.revivalmodding.metaverse.client.render.LightningProjectileRenderer;
 import dev.revivalmodding.metaverse.client.render.NoopEntityRenderer;
 import dev.revivalmodding.metaverse.common.capability.PlayerData;
 import dev.revivalmodding.metaverse.common.capability.PlayerDataFactory;
@@ -48,7 +49,7 @@ public class MetaVerse {
 
     private void clientSetup(FMLClientSetupEvent event) {
         Keybinds.init();
-        RenderingRegistry.registerEntityRenderingHandler(MVEntities.LIGHTNING_PROJECTILE.get(), NoopEntityRenderer::new);
+        RenderingRegistry.registerEntityRenderingHandler(MVEntities.LIGHTNING_PROJECTILE.get(), LightningProjectileRenderer::new);
     }
 
     private void serverStart(FMLServerStartingEvent event) {

@@ -15,9 +15,13 @@ import net.minecraft.world.World;
 import net.minecraft.world.server.ServerWorld;
 import net.minecraftforge.fml.network.NetworkHooks;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class LightningProjectile extends Entity {
 
     private static final double DRAG = 0.95;
+    private final List<Vec3d> tickedPositions = new ArrayList<>();
 
     public LightningProjectile(World world) {
         this(MVEntities.LIGHTNING_PROJECTILE.get(), world);
@@ -56,6 +60,10 @@ public class LightningProjectile extends Entity {
         updateDirection();
         Vec3d motion = getMotion();
         setMotion(motion.x, motion.y - 0.05, motion.z);
+        if(ticksExisted % 3 == 0) {
+            int offset = 2;
+            tickedPositions.add(getPositionVec().add(new Vec3d(rand.nextInt(offset) - rand.nextInt(offset), rand.nextInt(offset) - rand.nextInt(offset), rand.nextInt(offset) - rand.nextInt(offset))));
+        }
         super.tick();
         Vec3d position = getPositionVec();
         BlockRayTraceResult traceResult = world.rayTraceBlocks(new RayTraceContext(position, position.add(motion), RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, this));
@@ -75,9 +83,13 @@ public class LightningProjectile extends Entity {
         move(MoverType.SELF, getMotion());
     }
 
+    public List<Vec3d> getTickedPositions() {
+        return tickedPositions;
+    }
+
     @Override
     public boolean isInRangeToRenderDist(double distance) {
-        return false;
+        return true;
     }
 
     private void spawnParticleRandomly(World world, IParticleData data, double x, double y, double z, int modifier) {
