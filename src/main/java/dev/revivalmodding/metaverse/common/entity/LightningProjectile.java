@@ -74,12 +74,12 @@ public class LightningProjectile extends Entity {
                 remove();
             }
         }
-        if(world.isRemote) {
+        /*if(world.isRemote) {
             for(int i = 0; i < 5; i++) {
                 spawnParticleRandomly(world, ParticleTypes.SMOKE, getPosX(), getPosY(), getPosZ(), 5);
                 spawnParticleRandomly(world, ParticleTypes.FLAME, getPosX(), getPosY(), getPosZ(), 20);
             }
-        }
+        }*/
         move(MoverType.SELF, getMotion());
     }
 

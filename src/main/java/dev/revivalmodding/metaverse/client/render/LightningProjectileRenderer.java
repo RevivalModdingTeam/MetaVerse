@@ -5,6 +5,7 @@ import com.mojang.blaze3d.platform.GlStateManager;
 import com.mojang.blaze3d.systems.RenderSystem;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import dev.revivalmodding.metaverse.common.entity.LightningProjectile;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.entity.EntityRenderer;
 import net.minecraft.client.renderer.entity.EntityRendererManager;
@@ -35,10 +36,12 @@ public class LightningProjectileRenderer extends EntityRenderer<LightningProject
         BufferBuilder bufferBuilder = tessellator.getBuffer();
         bufferBuilder.begin(3, DefaultVertexFormats.POSITION_COLOR);
         GlStateManager.disableTexture();
-        GlStateManager.lineWidth(10);
+        GlStateManager.lineWidth(3);
         GlStateManager.enableBlend();
         RenderSystem.defaultBlendFunc();
-        for(int i = 0; i < points.size(); i++) {
+        int j = 0;
+        for(int i = points.size() - 1; i >= 0; i--) {
+            if(j > 5) break;
             Vec3d current = points.get(i);
             if(connectedTo != null) {
                 float relativeX1 = interpolate(current.x - entityIn.getPosX(), current.x - entityIn.lastTickPosX, partialTicks);
@@ -47,10 +50,11 @@ public class LightningProjectileRenderer extends EntityRenderer<LightningProject
                 float relativeX2 = interpolate(connectedTo.x - entityIn.getPosX(), connectedTo.x - entityIn.lastTickPosX, partialTicks);
                 float relativeY2 = interpolate(connectedTo.y - entityIn.getPosY(), connectedTo.y - entityIn.lastTickPosY, partialTicks);
                 float relativeZ2 = interpolate(connectedTo.z - entityIn.getPosZ(), connectedTo.z - entityIn.lastTickPosZ, partialTicks);
-                bufferBuilder.pos(matrix4f, relativeX2, relativeY2, relativeZ2).color(0.8F, 1.0F, 1.0F, 0.6F).endVertex();
-                bufferBuilder.pos(matrix4f, relativeX1, relativeY1, relativeZ1).color(0.8F, 1.0F, 1.0F, 0.6F).endVertex();
+                bufferBuilder.pos(matrix4f, relativeX2, relativeY2, relativeZ2).color(0.8F, 1.0F, 1.0F, 1.0F).endVertex();
+                bufferBuilder.pos(matrix4f, relativeX1, relativeY1, relativeZ1).color(0.8F, 1.0F, 1.0F, 1.0F).endVertex();
             }
             connectedTo = current;
+            ++j;
         }
         tessellator.draw();
         GlStateManager.disableBlend();
