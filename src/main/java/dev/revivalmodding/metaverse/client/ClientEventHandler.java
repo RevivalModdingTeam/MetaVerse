@@ -1,28 +1,84 @@
 package dev.revivalmodding.metaverse.client;
 
+import com.mojang.blaze3d.platform.GlStateManager;
 import dev.revivalmodding.metaverse.MetaVerse;
 import dev.revivalmodding.metaverse.ability.core.IAbility;
 import dev.revivalmodding.metaverse.ability.interfaces.CooldownAbility;
 import dev.revivalmodding.metaverse.ability.interfaces.InfoRenderer;
 import dev.revivalmodding.metaverse.ability.interfaces.LevelableAbility;
 import dev.revivalmodding.metaverse.client.screen.AbilityScreen;
+import dev.revivalmodding.metaverse.common.capability.PlayerData;
 import dev.revivalmodding.metaverse.common.capability.PlayerDataFactory;
 import dev.revivalmodding.metaverse.common.capability.object.Abilities;
+import dev.revivalmodding.metaverse.init.MVAbilities;
 import dev.revivalmodding.metaverse.network.NetworkManager;
 import dev.revivalmodding.metaverse.network.packet.SPacketToggleAbility;
+import dev.revivalmodding.metaverse.util.AbilityHelper;
 import dev.revivalmodding.metaverse.util.RenderUtils;
 import net.minecraft.client.MainWindow;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.settings.KeyBinding;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Direction;
+import net.minecraft.util.math.RayTraceContext;
+import net.minecraft.util.math.RayTraceResult;
+import net.minecraft.util.math.Vec3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.client.event.InputEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 
 @Mod.EventBusSubscriber(modid = MetaVerse.MODID, value = Dist.CLIENT)
 public class ClientEventHandler {
+
+    @SubscribeEvent
+    public static void onPlayerRenderPre(RenderPlayerEvent.Pre e) {
+        e.getMatrixStack().push();
+        PlayerEntity player = e.getPlayer();
+        PlayerData data = PlayerDataFactory.getCapability(player).orElse(null);
+        if (data != null && AbilityHelper.hasActiveAbility(MVAbilities.WALL_RUNNING, data.getPlayerAbilities())) {
+            Vec3d vec0 = new Vec3d(player.getPosX(), player.getPosY() + 1, player.getPosZ());
+            Vec3d vec1 = player.getLookVec();
+            Vec3d vec2 = vec0.add(vec1);
+            RayTraceResult rayTraceResult = player.world.rayTraceBlocks(new RayTraceContext(vec0, vec2, RayTraceContext.BlockMode.COLLIDER, RayTraceContext.FluidMode.NONE, null));
+            boolean posChanged = player.prevPosY != player.getPosY();
+            boolean isActuallyWallrunning = rayTraceResult != null && rayTraceResult.getType() == RayTraceResult.Type.BLOCK && posChanged;
+            if (!isActuallyWallrunning) {
+                return;
+            }
+
+            Direction facing = player.getHorizontalFacing();
+            switch (facing) {
+                case SOUTH: {
+                    e.getMatrixStack().rotate(Vector3f.XP.rotation(-95));
+                    break;
+                }
+                case NORTH: {
+                    e.getMatrixStack().rotate(Vector3f.XP.rotation(95));
+                    break;
+                }
+                case WEST: {
+                    e.getMatrixStack().rotate(Vector3f.ZP.rotation(-95));
+                    break;
+                }
+                case EAST: {
+                    e.getMatrixStack().rotate(Vector3f.ZP.rotation(95));
+                    break;
+                }
+                default:
+                    break;
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public static void onPlayerRenderPost(RenderPlayerEvent.Post e) {
+        e.getMatrixStack().pop();
+    }
 
     @SubscribeEvent
     public static void onKeyPressed(InputEvent.KeyInputEvent event) {
