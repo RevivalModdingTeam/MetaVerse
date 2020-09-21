@@ -1,5 +1,6 @@
 package dev.revivalmodding.metaverse.metapower;
 
+import com.google.common.collect.Lists;
 import dev.revivalmodding.metaverse.ability.core.AbilityType;
 import dev.revivalmodding.metaverse.common.capability.PlayerData;
 import dev.revivalmodding.metaverse.common.capability.PlayerDataFactory;
@@ -89,14 +90,13 @@ public class Metapower {
     public static Metapower read(CompoundNBT nbt) {
         String origin = nbt.getString("name");
         Metapower metapower = new Metapower(origin);
-        ListNBT contained = nbt.contains("contained") ? nbt.getList("contained", Constants.NBT.TAG_STRING) : new ListNBT();
-        for(int i = 0; i < contained.size(); i++) {
+        metapower.containedAbilities = Lists.newArrayList();
+        ListNBT contained = nbt.getList("contained", Constants.NBT.TAG_STRING);
+
+        for (int i = 0; i < contained.size(); i++) {
             ResourceLocation resourceLocation = new ResourceLocation(contained.getString(i));
             AbilityType<?> type = MVRegistries.ABILITIES.getValue(resourceLocation);
-            if(type == null) {
-                continue;
-            }
-            metapower.containedAbilities.add(type);
+            if(type != null) metapower.containedAbilities.add(type);
         }
         return metapower;
     }

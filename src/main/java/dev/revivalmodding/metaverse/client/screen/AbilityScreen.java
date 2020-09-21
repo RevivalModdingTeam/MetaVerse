@@ -35,11 +35,10 @@ public class AbilityScreen extends Screen {
     private final int xSize = 200;
     private final int ySize = 180;
     private int scrollOffset;
-    private final List<AbilityType<?>> allTypes = new ArrayList<>(MVRegistries.ABILITIES.getValues());
+    private List<AbilityType<?>> allTypes;
 
     public AbilityScreen() {
         super(new StringTextComponent("Ability screen"));
-        allTypes.sort(Comparator.comparingInt(AbilityType::getPrice));
     }
 
     @SuppressWarnings("unchecked")
@@ -49,6 +48,7 @@ public class AbilityScreen extends Screen {
         left = (width - xSize) / 2;
         top = (height - ySize) / 2;
         playerAbilities = PlayerDataFactory.getCapability(minecraft.player).orElseThrow(NullPointerException::new).getPlayerAbilities();
+        allTypes = new ArrayList<>(playerAbilities.getAvailableTypes());
         for(int i = scrollOffset; i < scrollOffset + 5; i++) {
             if(i >= allTypes.size()) break;
             int n = i - scrollOffset;

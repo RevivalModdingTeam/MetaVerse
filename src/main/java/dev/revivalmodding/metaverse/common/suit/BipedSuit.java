@@ -1,28 +1,23 @@
 package dev.revivalmodding.metaverse.common.suit;
 
+import dev.revivalmodding.metaverse.ability.core.AbilityType;
 import dev.revivalmodding.metaverse.client.models.SuitModel;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.item.ArmorMaterial;
 import net.minecraft.item.ItemStack;
-import net.minecraft.world.World;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+import java.util.List;
+import java.util.function.Supplier;
+
 public class BipedSuit extends BasicSuit {
 
-    public BipedSuit(String texture, ArmorMaterial materialIn, EquipmentSlotType slot, Properties builder) {
-        super(texture, materialIn, slot, builder);
-    }
-
-    @Override
-    public void onArmorTick(ItemStack item, World world, PlayerEntity entity) {
-        // to Chappie -> won't work
-        /*PlayerDataFactory.getCapability(entity).ifPresent(s -> {
-            Registry.AbilityTypes.WALL_RUNNING.onUpdate(Registry.AbilityTypes.WALL_RUNNING.newInstance(), entity);
-        });*/
+    public BipedSuit(String modid, String name, ArmorMaterial materialIn, EquipmentSlotType slot, Supplier<List<AbilityType<?>>> abilities, Properties builder) {
+        super(modid, name, materialIn, slot, abilities, builder);
     }
 
     @SuppressWarnings("unchecked")
